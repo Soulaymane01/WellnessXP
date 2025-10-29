@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import Dashboard from "@/components/dashboard"
-import ChatBot from "@/components/chatbot"
 import Stories from "@/components/stories"
 import Quiz from "@/components/quiz"
 import HealthMap from "@/components/health-map"
@@ -18,8 +17,6 @@ export default function Home() {
     switch (currentPage) {
       case "dashboard":
         return <Dashboard onNavigate={setCurrentPage} />
-      case "chat":
-        return <ChatBot />
       case "stories":
         return <Stories />
       case "quiz":

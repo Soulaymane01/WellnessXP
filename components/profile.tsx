@@ -341,7 +341,6 @@ export default function Profile() {
                 {[
                   { action: "Quiz complété", detail: "Santé Menstruelle", date: "Aujourd'hui" },
                   { action: "Histoire lue", detail: "Consentement et Respect", date: "Hier" },
-                  { action: "Question posée", detail: "À Dr. Amina", date: "Il y a 2 jours" },
                   { action: "Badge débloqué", detail: "Curieux", date: "Il y a 3 jours" },
                   { action: "Centre visité", detail: "Centre de Santé Casablanca", date: "Il y a 5 jours" },
                 ].map((item, idx) => (

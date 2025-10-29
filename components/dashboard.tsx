@@ -44,14 +44,6 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
 
   const features = [
     {
-      icon: Brain,
-      title: "Dr. Amina",
-      description: "Chatbot IA pour vos questions",
-      color: "bg-emerald-100 dark:bg-emerald-900/30",
-      page: "chat",
-      stats: "23 questions posées",
-    },
-    {
       icon: BookOpen,
       title: "Histoires Interactives",
       description: "Apprenez à travers des récits",

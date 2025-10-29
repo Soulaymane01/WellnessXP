@@ -13,16 +13,34 @@ interface DashboardProps {
 export default function Dashboard({ onNavigate }: DashboardProps) {
   const [userProgress, setUserProgress] = useState(getUserProgress())
   const [timeOfDay, setTimeOfDay] = useState("morning")
+  const [isNavOpen, setIsNavOpen] = useState(true)
 
-  useEffect(() => {
-    const hour = new Date().getHours()
-    if (hour < 12) setTimeOfDay("morning")
-    else if (hour < 18) setTimeOfDay("afternoon")
-    else setTimeOfDay("evening")
+ useEffect(() => {
+  const hour = new Date().getHours()
+  if (hour < 12) setTimeOfDay("morning")
+  else if (hour < 18) setTimeOfDay("afternoon")
+  else setTimeOfDay("evening")
 
-    const progress = getUserProgress()
-    setUserProgress(progress)
-  }, [])
+  const progress = getUserProgress()
+  setUserProgress(progress)
+
+  // Observer pour détecter les changements de la variable CSS --nav-width
+  const observer = new MutationObserver(() => {
+    const navWidth = getComputedStyle(document.documentElement).getPropertyValue('--nav-width').trim()
+    setIsNavOpen(navWidth === '16rem')
+  })
+
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['style']
+  })
+
+  // Vérification initiale de l'état du menu
+  const initialWidth = getComputedStyle(document.documentElement).getPropertyValue('--nav-width').trim()
+  setIsNavOpen(initialWidth === '16rem' || initialWidth === '')
+
+  return () => observer.disconnect()
+}, [])
 
   const features = [
     {
@@ -106,11 +124,13 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      {/* Enhanced Header */}
+<div className={`min-h-screen bg-gradient-to-br from-background via-background to-primary/5 transition-all duration-300 ${
+  isNavOpen ? 'md:ml-64' : 'md:ml-20'
+}`}>      {/* Enhanced Header */}
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
+<div className={`mx-auto px-4 sm:px-6 lg:px-8 py-6 transition-all duration-300 ${
+  isNavOpen ? 'max-w-7xl' : 'max-w-full'
+}`}>          <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-foreground">WellnessXP</h1>
               <p className="text-sm text-muted-foreground mt-1">Votre plateforme de santé sexuelle</p>
@@ -134,8 +154,9 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       </div>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-12">
+<main className={`mx-auto px-4 sm:px-6 lg:px-8 py-12 transition-all duration-300 ${
+  isNavOpen ? 'max-w-7xl' : 'max-w-full'
+}`}>        <div className="mb-12">
           <h2 className="text-3xl font-bold text-foreground mb-2">{getGreeting()}</h2>
           <p className="text-muted-foreground max-w-2xl">
             Explorez nos ressources complètes sur la santé sexuelle et reproductive. Posez vos questions à Dr. Amina,
@@ -230,8 +251,11 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
         {/* Features Grid */}
         <div className="mb-12">
           <h3 className="text-xl font-bold text-foreground mb-4">Explorez nos Ressources</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature) => {
+<div className={`grid gap-6 transition-all duration-300 ${
+  isNavOpen 
+    ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
+    : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
+}`}>            {features.map((feature) => {
               const Icon = feature.icon
               return (
                 <Card

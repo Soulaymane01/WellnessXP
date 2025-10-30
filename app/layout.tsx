@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   title: "WellnessXP - Santé Sexuelle",
   description: "Plateforme interactive d'éducation en santé sexuelle et reproductive pour les jeunes marocains",
   generator: "v0.app",
+  manifest: "/manifest.json",
+  themeColor: "#FF5733",
 }
 
 export default async function RootLayout({

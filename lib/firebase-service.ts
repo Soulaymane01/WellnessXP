@@ -3,6 +3,7 @@
 import { cookies } from 'next/headers'
 import { db } from "./firebase-config"
 import { doc, setDoc, getDoc, updateDoc, serverTimestamp, collection, getDocs, query, orderBy, limit } from "firebase/firestore"
+import { appendOffsetOfLegend } from 'recharts/types/util/ChartUtils'
 
 export interface UserProgress {
   userId: string

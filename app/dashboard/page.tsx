@@ -252,9 +252,7 @@ export default function Dashboard({ onNavigate, recentQuizzes = [], recentStorie
   const recommendations = getRecommendations()
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-background via-background to-primary/5 transition-all duration-300 ${
-      isNavOpen ? 'md:ml-64' : 'md:ml-20'
-    }`}>
+    <div className={`min-h-screen bg-gradient-to-br from-background via-background to-primary/5 transition-all duration-300 `}>
       {/* Enhanced Header with Level Progress */}
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className={`mx-auto px-4 sm:px-6 lg:px-8 py-6 transition-all duration-300 ${

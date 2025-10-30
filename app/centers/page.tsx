@@ -238,9 +238,7 @@ export default function EnhancedHealthCenters() {
   const allServices = Array.from(new Set(centers.flatMap(c => c.services)))
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-background via-background to-chart-5/5 transition-all duration-300 ${
-      isNavOpen ? 'md:ml-64' : 'md:ml-20'
-    }`}>
+    <div className={`min-h-screen bg-gradient-to-br from-background via-background to-chart-5/5 transition-all duration-300 `}>
       {/* Header */}
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

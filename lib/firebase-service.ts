@@ -310,19 +310,28 @@ export async function getAllStories() {
 
 export async function getStoryById(storyId: string) {
   try {
-    const storyRef = doc(db, "stories", storyId)
-    const storySnap = await getDoc(storyRef)
-    if (storySnap.exists()) {
-      const data = storySnap.data()
-      console.log('Story data from Firestore:', data)
-      return { 
-        id: storySnap.id, 
-        ...data 
-      }
+    // Ensure storyId is a valid string
+    if (!storyId || typeof storyId !== 'string') {
+      console.error('Invalid story ID:', storyId)
+      return null
     }
-    return null
+
+    const storyRef = doc(db, 'stories', storyId)
+    const storySnap = await getDoc(storyRef)
+
+    if (!storySnap.exists()) {
+      console.log('Story not found:', storyId)
+      return null
+    }
+
+    const data = storySnap.data()
+    
+    return {
+      id: storySnap.id,
+      ...data
+    } as Story
   } catch (error) {
-    console.error("Error fetching story:", error)
+    console.error('Error fetching story:', error)
     return null
   }
 }

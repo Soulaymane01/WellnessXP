@@ -1,3 +1,4 @@
+// /app/component/stories-component.tsx
 "use client"
 
 import { useState, useEffect } from "react"
@@ -121,9 +122,7 @@ export default function Stories({ stories }: StoriesProps) {
 
   if (!currentStory) {
     return (
-      <div className={`min-h-screen bg-gradient-to-br from-background via-background to-purple-500/5 transition-all duration-300 ${
-        isNavOpen ? 'md:ml-64' : 'md:ml-20'
-      }`}>
+      <div className={`min-h-screen bg-gradient-to-br from-background via-background to-purple-500/5 transition-all duration-300 `}>
         <div className="max-w-4xl mx-auto px-4 py-8">
           <p className="text-center text-muted-foreground">
             {getText("Aucune histoire disponible", "لا توجد قصص متاحة", "No stories available")}
@@ -134,9 +133,7 @@ export default function Stories({ stories }: StoriesProps) {
   }
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-background via-background to-purple-500/5 transition-all duration-300 ${
-      isNavOpen ? 'md:ml-64' : 'md:ml-20'
-    }`}>
+    <div className={`min-h-screen bg-gradient-to-br from-background via-background to-purple-500/5 transition-all duration-300 `}>
       {/* Header */}
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { User, Trophy, Zap, Settings, LogOut } from "lucide-react"
-import { getUserProgress } from "@/lib/points-manager"
+import { useUser } from '@/lib/user-context'
 
 interface Badge {
   id: number
@@ -109,12 +109,11 @@ const ACHIEVEMENTS: Achievement[] = [
 export default function Profile() {
   const [activeTab, setActiveTab] = useState<"overview" | "badges" | "settings">("overview")
   const [language, setLanguage] = useState("fr")
-  const [userProgress, setUserProgress] = useState(getUserProgress())
+  const { progress } = useUser()
   const [unlockedBadges, setUnlockedBadges] = useState<string[]>([])
 
   useEffect(() => {
-    const progress = getUserProgress()
-    setUserProgress(progress)
+
     setUnlockedBadges(progress.badges)
   }, [])
 
@@ -132,15 +131,15 @@ export default function Profile() {
   })
 
   const userStats = {
-    level: userProgress.level,
-    xp: userProgress.totalXP % 500,
+    level: progress.level,
+    xp: progress.totalXP % 500,
     nextLevelXp: 500,
-    totalXp: userProgress.totalXP,
+    totalXp: progress.totalXP,
     quizzesCompleted: 7,
     storiesRead: 12,
     questionsAsked: 23,
     centersVisited: 4,
-    reelsWatched: userProgress.reelsWatched,
+    reelsWatched: progress.reelsWatched,
   }
 
   const xpPercentage = (userStats.xp / userStats.nextLevelXp) * 100

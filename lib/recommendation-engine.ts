@@ -1,4 +1,4 @@
-import { getUserProgress } from "./points-manager"
+import { useUser } from '@/lib/user-context'
 
 export interface UserInsights {
   totalActivities: number
@@ -19,7 +19,7 @@ export interface Recommendation {
 }
 
 export const calculateUserInsights = (): UserInsights => {
-  const progress = getUserProgress()
+  const { progress } = useUser()
 
   const totalActivities =
     progress.reelsWatched + (progress.quizPoints > 0 ? 1 : 0) + (progress.storiesPoints > 0 ? 1 : 0)

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { getUserProgress } from "@/lib/points-manager"
+import { useUser } from '@/lib/user-context'
 import { calculateUserInsights, getPersonalizedRecommendations } from "@/lib/recommendation-engine"
 import {
   BarChart,
@@ -23,22 +23,21 @@ import {
 import { Activity, Target, Zap, Calendar } from "lucide-react"
 
 export default function Analytics() {
-  const [userProgress, setUserProgress] = useState(getUserProgress())
+
   const [insights, setInsights] = useState(calculateUserInsights())
   const [recommendations, setRecommendations] = useState(getPersonalizedRecommendations())
+  const { progress } = useUser()
 
   useEffect(() => {
-    const progress = getUserProgress()
-    setUserProgress(progress)
     setInsights(calculateUserInsights())
     setRecommendations(getPersonalizedRecommendations())
   }, [])
 
   // Data for charts
   const activityData = [
-    { name: "Quiz", value: userProgress.quizzesCompleted, fill: "#10b981" },
-    { name: "Histoires", value: userProgress.storiesRead, fill: "#6366f1" },
-    { name: "Reels", value: userProgress.reelsWatched, fill: "#a855f7" },
+    { name: "Quiz", value: progress.quizzesCompleted, fill: "#10b981" },
+    { name: "Histoires", value: progress.storiesRead, fill: "#6366f1" },
+    { name: "Reels", value: progress.reelsWatched, fill: "#a855f7" },
   ]
 
   const xpProgressData = [
@@ -255,23 +254,23 @@ export default function Analytics() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-border/50">
                 <span className="text-sm text-muted-foreground">Quiz Complétés</span>
-                <span className="font-semibold text-foreground">{userProgress.quizzesCompleted}</span>
+                <span className="font-semibold text-foreground">{progress.quizzesCompleted}</span>
               </div>
               <div className="flex items-center justify-between pb-3 border-b border-border/50">
                 <span className="text-sm text-muted-foreground">Histoires Lues</span>
-                <span className="font-semibold text-foreground">{userProgress.storiesRead}</span>
+                <span className="font-semibold text-foreground">{progress.storiesRead}</span>
               </div>
               <div className="flex items-center justify-between pb-3 border-b border-border/50">
                 <span className="text-sm text-muted-foreground">Reels Regardés</span>
-                <span className="font-semibold text-foreground">{userProgress.reelsWatched}</span>
+                <span className="font-semibold text-foreground">{progress.reelsWatched}</span>
               </div>
               <div className="flex items-center justify-between pb-3 border-b border-border/50">
                 <span className="text-sm text-muted-foreground">XP Total</span>
-                <span className="font-semibold text-foreground">{userProgress.totalXP}</span>
+                <span className="font-semibold text-foreground">{progress.totalXP}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Niveau Actuel</span>
-                <span className="font-semibold text-foreground">Niveau {userProgress.level}</span>
+                <span className="font-semibold text-foreground">Niveau {progress.level}</span>
               </div>
             </CardContent>
           </Card>
@@ -283,7 +282,7 @@ export default function Analytics() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-border/50">
                 <span className="text-sm text-muted-foreground">Badges Débloqués</span>
-                <span className="font-semibold text-foreground">{userProgress.badges.length}/6</span>
+                <span className="font-semibold text-foreground">{progress.badges.length}/6</span>
               </div>
               <div className="flex items-center justify-between pb-3 border-b border-border/50">
                 <span className="text-sm text-muted-foreground">Taux de Réussite Quiz</span>

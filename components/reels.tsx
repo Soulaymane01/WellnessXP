@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Heart, Share2, MessageCircle, Volume2, VolumeX, ChevronUp, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { addReelsPoints, checkBadgeUnlock, updateUserProgress } from "@/lib/points-manager"
+import { useUser } from "@/lib/user-context"
 
 interface Reel {
   id: number
@@ -101,14 +101,58 @@ const reelsData: Reel[] = [
 ]
 
 export default function Reels() {
+  const { addReels, progress, isPending, settings, userId } = useUser()
+  
   const [currentReelIndex, setCurrentReelIndex] = useState(0)
   const [reels, setReels] = useState(reelsData)
-  const [isMuted, setIsMuted] = useState(false)
+  const [isMuted, setIsMuted] = useState(!settings.soundEnabled)
   const [watchedReels, setWatchedReels] = useState<number[]>([])
-  const [totalPointsEarned, setTotalPointsEarned] = useState(0)
-  const [xpNotification, setXpNotification] = useState<{ points: number; show: boolean }>({ points: 0, show: false })
+  const [xpNotification, setXpNotification] = useState<{ points: number; show: boolean }>({ 
+    points: 0, 
+    show: false 
+  })
 
   const currentReel = reels[currentReelIndex]
+
+  // Load watched reels from localStorage on mount
+  useEffect(() => {
+    if (!userId) return
+    
+    const saved = localStorage.getItem(`reelsProgress_${userId}`)
+    if (saved) {
+      try {
+        const watched = JSON.parse(saved)
+        setWatchedReels(watched)
+      } catch (error) {
+        console.error('Failed to load watched reels:', error)
+      }
+    }
+  }, [userId])
+
+  // Save watched reels to localStorage
+  const saveWatchedReels = (watched: number[]) => {
+    if (!userId) return
+    localStorage.setItem(`reelsProgress_${userId}`, JSON.stringify(watched))
+  }
+
+  const markReelAsWatched = async (reelId: number) => {
+    if (!watchedReels.includes(reelId)) {
+      const reel = reels.find((r) => r.id === reelId)
+      if (!reel) return
+
+      // Update local state
+      const newWatchedReels = [...watchedReels, reelId]
+      setWatchedReels(newWatchedReels)
+      saveWatchedReels(newWatchedReels)
+
+      // Add points via context (includes badge checking and activity logging)
+      await addReels(reel.points, reel.title)
+
+      // Show XP notification
+      setXpNotification({ points: reel.points, show: true })
+      setTimeout(() => setXpNotification({ points: 0, show: false }), 2000)
+    }
+  }
 
   const handleNextReel = () => {
     if (currentReelIndex < reels.length - 1) {
@@ -120,33 +164,6 @@ export default function Reels() {
   const handlePreviousReel = () => {
     if (currentReelIndex > 0) {
       setCurrentReelIndex(currentReelIndex - 1)
-    }
-  }
-
-  const markReelAsWatched = (reelId: number) => {
-    if (!watchedReels.includes(reelId)) {
-      const reel = reels.find((r) => r.id === reelId)
-      if (!reel) return
-
-      // Update local state
-      setWatchedReels([...watchedReels, reelId])
-      setTotalPointsEarned(totalPointsEarned + reel.points)
-
-      // Update points manager
-      const updatedProgress = addReelsPoints(reel.points)
-      const newBadges = checkBadgeUnlock(updatedProgress)
-      if (newBadges.length > updatedProgress.badges.length) {
-        updateUserProgress({ badges: newBadges })
-      }
-
-      // Show XP notification
-      setXpNotification({ points: reel.points, show: true })
-      setTimeout(() => setXpNotification({ points: 0, show: false }), 2000)
-
-      // Save to localStorage
-      const saved = JSON.parse(localStorage.getItem("reelsProgress") || "{}")
-      saved[reelId] = true
-      localStorage.setItem("reelsProgress", JSON.stringify(saved))
     }
   }
 
@@ -167,16 +184,10 @@ export default function Reels() {
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [currentReelIndex])
 
+  // Sync mute state with settings
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("reelsProgress") || "{}")
-    const watched = Object.keys(saved).map(Number)
-    setWatchedReels(watched)
-    const points = watched.reduce((sum, id) => {
-      const reel = reels.find((r) => r.id === id)
-      return sum + (reel?.points || 0)
-    }, 0)
-    setTotalPointsEarned(points)
-  }, [])
+    setIsMuted(!settings.soundEnabled)
+  }, [settings.soundEnabled])
 
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
@@ -189,8 +200,12 @@ export default function Reels() {
           >
             {/* Video Placeholder with Icon */}
             <div className="text-8xl mb-4">{currentReel.icon}</div>
-            <h2 className="text-2xl md:text-3xl font-bold text-white text-center px-4 mb-2">{currentReel.title}</h2>
-            <p className="text-white/80 text-center px-4 text-sm md:text-base">{currentReel.description}</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-white text-center px-4 mb-2">
+              {currentReel.title}
+            </h2>
+            <p className="text-white/80 text-center px-4 text-sm md:text-base">
+              {currentReel.description}
+            </p>
 
             {/* Duration Badge */}
             <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
@@ -200,7 +215,7 @@ export default function Reels() {
             {/* Watched Indicator */}
             {watchedReels.includes(currentReel.id) && (
               <div className="absolute top-4 left-4 bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                Regardé
+                ✓ Regardé
               </div>
             )}
 
@@ -217,10 +232,20 @@ export default function Reels() {
               +{currentReel.points} pts
             </div>
 
+            {/* XP Notification */}
             {xpNotification.show && (
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="bg-emerald-500 text-white px-6 py-3 rounded-full font-bold text-xl animate-bounce">
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                <div className="bg-emerald-500 text-white px-6 py-3 rounded-full font-bold text-xl animate-bounce shadow-lg">
                   +{xpNotification.points} XP!
+                </div>
+              </div>
+            )}
+
+            {/* Loading Overlay */}
+            {isPending && (
+              <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                <div className="bg-white/90 text-gray-900 px-4 py-2 rounded-lg font-medium">
+                  Enregistrement...
                 </div>
               </div>
             )}
@@ -246,6 +271,11 @@ export default function Reels() {
             >
               <ChevronDown size={24} />
             </Button>
+          </div>
+
+          {/* Progress Indicator */}
+          <div className="mt-4 text-sm text-muted-foreground">
+            Reel {currentReelIndex + 1} / {reels.length} • {watchedReels.length} regardés
           </div>
         </div>
       </div>
@@ -278,7 +308,12 @@ export default function Reels() {
 
       {/* Left Sidebar - Reel List */}
       <div className="hidden lg:flex flex-col w-64 bg-card border-r border-border p-6 overflow-y-auto max-h-screen">
-        <h3 className="text-lg font-bold mb-4">Tous les Reels</h3>
+        <div className="mb-4">
+          <h3 className="text-lg font-bold mb-1">Tous les Reels</h3>
+          <p className="text-xs text-muted-foreground">
+            {progress.reelsWatched} regardés • {progress.reelsPoints} XP gagnés
+          </p>
+        </div>
         <div className="space-y-3">
           {reels.map((reel, index) => (
             <button
@@ -287,19 +322,22 @@ export default function Reels() {
                 markReelAsWatched(currentReel.id)
                 setCurrentReelIndex(index)
               }}
+              disabled={isPending}
               className={`w-full p-3 rounded-lg transition-smooth text-left ${
                 index === currentReelIndex
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted hover:bg-muted/80 text-foreground"
-              }`}
+              } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               <div className="flex items-center gap-2">
                 <span className="text-xl">{reel.icon}</span>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm truncate">{reel.title}</p>
-                  <p className="text-xs opacity-75">{reel.topic}</p>
+                  <p className="text-xs opacity-75">{reel.topic} • +{reel.points} XP</p>
                 </div>
-                {watchedReels.includes(reel.id) && <span className="text-xs font-bold">✓</span>}
+                {watchedReels.includes(reel.id) && (
+                  <span className="text-xs font-bold text-emerald-500">✓</span>
+                )}
               </div>
             </button>
           ))}

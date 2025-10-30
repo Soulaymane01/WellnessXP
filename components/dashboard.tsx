@@ -1,19 +1,19 @@
-"use client"
-
+'use client'
+import { useUser } from '@/lib/user-context'
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Heart, Brain, Users, Zap, BookOpen, Film, TrendingUp, Award, Clock, Target } from "lucide-react"
-import { getUserProgress } from "@/lib/points-manager"
 
 interface DashboardProps {
   onNavigate?: (page: string) => void
 }
 
 export default function Dashboard({ onNavigate }: DashboardProps) {
-  const [userProgress, setUserProgress] = useState(getUserProgress())
   const [timeOfDay, setTimeOfDay] = useState("morning")
   const [isNavOpen, setIsNavOpen] = useState(true)
+
+  const { progress, isPending, settings } = useUser()
 
  useEffect(() => {
   const hour = new Date().getHours()
@@ -21,8 +21,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
   else if (hour < 18) setTimeOfDay("afternoon")
   else setTimeOfDay("evening")
 
-  const progress = getUserProgress()
-  setUserProgress(progress)
+
 
   // Observer pour détecter les changements de la variable CSS --nav-width
   const observer = new MutationObserver(() => {
@@ -57,7 +56,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       description: "Vidéos courtes et engageantes",
       color: "bg-violet-100 dark:bg-violet-900/30",
       page: "reels",
-      stats: `${userProgress.reelsWatched} reels regardés`,
+      stats: `${progress.reelsWatched} reels regardés`,
     },
     {
       icon: Zap,
@@ -130,11 +129,11 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             <div className="hidden md:flex items-center gap-4">
               <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
                 <Zap className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-primary">Niveau {userProgress.level}</span>
+                <span className="text-sm font-medium text-primary">Niveau {progress.level}</span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-secondary/10 rounded-full">
                 <Award className="w-4 h-4 text-secondary" />
-                <span className="text-sm font-medium text-secondary">{userProgress.totalXP} XP</span>
+                <span className="text-sm font-medium text-secondary">{progress.totalXP} XP</span>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-full">
                 <div className="w-2 h-2 bg-accent rounded-full animate-pulse"></div>

@@ -10,7 +10,9 @@ import {
   logUserActivity,
   getUserActivityHistory,
   checkBadgeUnlock,
-  saveUserProgress
+  saveUserProgress,
+  getUserLanguage,            
+  updateUserLanguage          
 } from './firebase-service'
 
 // User Settings Interface
@@ -98,12 +100,45 @@ export function UserProvider({
     }
   }, [userId])
 
-  // Save settings to localStorage whenever they change
+  // 🆕 Load settings + language from Firebase and localStorage
+  useEffect(() => {
+    async function loadSettings() {
+      const savedSettings = localStorage.getItem(`user_settings_${userId}`)
+      let loadedSettings = DEFAULT_SETTINGS
+
+      if (savedSettings) {
+        try {
+          loadedSettings = JSON.parse(savedSettings)
+        } catch (error) {
+          console.error('Failed to load settings from localStorage:', error)
+        }
+      }
+
+      // Fetch language from Firebase (will override local value)
+      try {
+        const firebaseLang = await getUserLanguage()
+        loadedSettings.language = firebaseLang
+      } catch (error) {
+        console.error('Failed to fetch user language from Firebase:', error)
+      }
+
+      setSettings(loadedSettings)
+    }
+
+    loadSettings()
+  }, [userId])
+
+  // 🆕 Save settings locally and in Firebase when they change
   useEffect(() => {
     localStorage.setItem(`user_settings_${userId}`, JSON.stringify(settings))
+
+    // Sync language only if changed
+    updateUserLanguage(settings.language).catch(err => 
+      console.error('Failed to sync language to Firebase:', err)
+    )
   }, [settings, userId])
 
-  // Update user settings
+  // Update user settings locally (and trigger sync)
   const handleUpdateSettings = (newSettings: Partial<UserSettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }))
   }

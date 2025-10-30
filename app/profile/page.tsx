@@ -632,9 +632,128 @@ export default function EnhancedProfile() {
                 </Card>
                 )
                 })}
-              </div>
-            )
-            }
             </div>
-        </div>
+          )
+        }
+
+        {activeTab === "settings" && (
+          <Card className="border-border/50 animate-in fade-in slide-in-from-bottom-4">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="w-5 h-5 text-primary" />
+                {getText("Paramètres du Profil", "إعدادات الملف الشخصي", "Profile Settings")}
+              </CardTitle>
+              <CardDescription>
+                {getText("Personnalisez votre expérience", "خصص تجربتك", "Customize your experience")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Language */}
+              <div>
+                <p className="font-semibold mb-2">{getText("Langue", "اللغة", "Language")}</p>
+                <div className="flex gap-2">
+                  <Button
+                    variant={settings.language === "fr" ? "default" : "outline"}
+                    onClick={() => handleLanguageChange("fr")}
+                  >
+                    🇫🇷 Français
+                  </Button>
+                  <Button
+                    variant={settings.language === "en" ? "default" : "outline"}
+                    onClick={() => handleLanguageChange("en")}
+                  >
+                    🇬🇧 English
+                  </Button>
+                  <Button
+                    variant={settings.language === "ar" ? "default" : "outline"}
+                    onClick={() => handleLanguageChange("ar")}
+                  >
+                    🇲🇦 العربية
+                  </Button>
+                </div>
+              </div>
+
+              {/* Theme */}
+              <div>
+                <p className="font-semibold mb-2">{getText("Thème", "السمة", "Theme")}</p>
+                <Button
+                  variant="outline"
+                  onClick={handleThemeToggle}
+                  className="flex items-center gap-2"
+                >
+                  {settings.theme === "dark" ? (
+                    <>
+                      <Sun className="w-4 h-4 text-amber-500" />{" "}
+                      {getText("Mode Clair", "الوضع الفاتح", "Light Mode")}
+                    </>
+                  ) : (
+                    <>
+                      <Moon className="w-4 h-4 text-blue-500" />{" "}
+                      {getText("Mode Sombre", "الوضع الداكن", "Dark Mode")}
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {/* Sound */}
+              <div>
+                <p className="font-semibold mb-2">{getText("Effets Sonores", "المؤثرات الصوتية", "Sound Effects")}</p>
+                <Button
+                  variant="outline"
+                  onClick={handleSoundToggle}
+                  className="flex items-center gap-2"
+                >
+                  {settings.soundEnabled ? (
+                    <>
+                      <Volume2 className="w-4 h-4 text-green-500" />{" "}
+                      {getText("Actif", "مفعل", "Enabled")}
+                    </>
+                  ) : (
+                    <>
+                      <VolumeX className="w-4 h-4 text-red-500" />{" "}
+                      {getText("Désactivé", "معطل", "Disabled")}
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {/* Notifications */}
+              <div>
+                <p className="font-semibold mb-2">{getText("Notifications", "الإشعارات", "Notifications")}</p>
+                <Button
+                  variant="outline"
+                  onClick={handleNotificationToggle}
+                  className="flex items-center gap-2"
+                >
+                  {settings.notificationsEnabled ? (
+                    <>
+                      <Bell className="w-4 h-4 text-green-500" />{" "}
+                      {getText("Activées", "مفعلة", "Enabled")}
+                    </>
+                  ) : (
+                    <>
+                      <Bell className="w-4 h-4 text-red-500" />{" "}
+                      {getText("Désactivées", "معطلة", "Disabled")}
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {/* Logout */}
+              <div className="pt-4 border-t border-border">
+                <Button
+                  variant="destructive"
+                  className="w-full flex items-center justify-center gap-2"
+                  onClick={() => alert(getText("Déconnexion...", "تسجيل الخروج...", "Logging out..."))}
+                >
+                  <LogOut className="w-4 h-4" />
+                  {getText("Se Déconnecter", "تسجيل الخروج", "Log Out")}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         )}
+      </div>
+    </div>
+  )
+}

@@ -402,3 +402,48 @@ export async function getAllReels() {
     return []
   }
 }
+
+// ===== LANGUAGE SETTINGS =====
+
+/**
+ * Get the user's language preference from Firebase.
+ */
+export async function getUserLanguage(): Promise<"en" | "fr" | "ar"> {
+  try {
+    const userId = await getUserId()
+    const userRef = doc(db, "users", userId)
+    const userSnap = await getDoc(userRef)
+
+    if (userSnap.exists()) {
+      const data = userSnap.data()
+      return (data.language as "en" | "fr" | "ar") || "en"
+    }
+
+    // Default language if user not found
+    return "en"
+  } catch (error) {
+    console.error("Error retrieving user language:", error)
+    return "en"
+  }
+}
+
+/**
+ * Update the user's preferred language in Firebase.
+ */
+export async function updateUserLanguage(language: "en" | "fr" | "ar"): Promise<boolean> {
+  try {
+    const userId = await getUserId()
+    const userRef = doc(db, "users", userId)
+
+    await updateDoc(userRef, {
+      language,
+      lastUpdated: serverTimestamp(),
+    })
+
+    console.log(`User language updated to: ${language}`)
+    return true
+  } catch (error) {
+    console.error("Error updating user language:", error)
+    return false
+  }
+}

@@ -6,9 +6,10 @@ import "./globals.css"
 import { getUserProgress } from '@/lib/firebase-service'
 import { UserProvider } from '@/lib/user-context'
 import { cookies } from 'next/headers'
+import { MobileNav, DesktopNav, NavOffset } from '@/components/navigation'
 
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
+const geist = Geist({ subsets: ["latin"] })
+const geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "WellnessXP - Santé Sexuelle",
@@ -27,9 +28,13 @@ export default async function RootLayout({
 
   return (
     <html lang="fr">
-      <body className={`font-sans antialiased`}>
+      <body className={`${geist.className} antialiased`}>
         <UserProvider initialProgress={initialProgress} userId={userId}>
-          {children}
+          <DesktopNav />
+          <MobileNav />
+          <NavOffset>
+            {children}
+          </NavOffset>
         </UserProvider>
       </body>
     </html>

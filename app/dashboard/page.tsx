@@ -3,7 +3,7 @@ import { useUser } from '@/lib/user-context'
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Heart, Brain, Users, Zap, BookOpen, Film, TrendingUp, Award, Clock, Target, CheckCircle2, Star, Flame } from "lucide-react"
+import { Heart, Brain, Users, Zap, BookOpen, Film, TrendingUp, Award, Clock, Target, CheckCircle2, Star, Flame, MapPin, Calendar, Eye, BookMarked } from "lucide-react"
 
 interface DashboardProps {
   onNavigate?: (page: string) => void
@@ -25,7 +25,6 @@ export default function Dashboard({ onNavigate, recentQuizzes = [], recentStorie
     else if (hour < 18) setTimeOfDay("afternoon")
     else setTimeOfDay("evening")
 
-    // Calculate streak from activity history
     calculateStreak()
 
     const observer = new MutationObserver(() => {
@@ -53,7 +52,6 @@ export default function Dashboard({ onNavigate, recentQuizzes = [], recentStorie
     let currentStreak = 1
     const today = new Date().setHours(0, 0, 0, 0)
     
-    // Sort activities by date
     const sortedActivities = [...activityHistory].sort((a, b) => 
       new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     )
@@ -78,12 +76,11 @@ export default function Dashboard({ onNavigate, recentQuizzes = [], recentStorie
     setStreak(currentStreak)
   }
 
-  // Calculate XP needed for next level
+  // Calculs de progression
   const currentLevelXP = (progress.level - 1) * 500
   const nextLevelXP = progress.level * 500
   const xpProgress = ((progress.totalXP - currentLevelXP) / (nextLevelXP - currentLevelXP)) * 100
 
-  // Calculate weekly XP
   const weeklyXP = activityHistory
     .filter(activity => {
       const activityDate = new Date(activity.timestamp)
@@ -93,12 +90,9 @@ export default function Dashboard({ onNavigate, recentQuizzes = [], recentStorie
     })
     .reduce((sum, activity) => sum + activity.xpEarned, 0)
 
-  // Get total activities completed
   const totalActivities = progress.quizzesCompleted + progress.storiesRead + progress.reelsWatched
-
-  // Get earned badges count
   const earnedBadgesCount = progress.badges.length
-  const totalBadgesCount = allBadges.length || 5
+  const totalBadgesCount = allBadges.length || 8
 
   const features = [
     {
@@ -106,9 +100,9 @@ export default function Dashboard({ onNavigate, recentQuizzes = [], recentStorie
       title: "Histoires Interactives",
       titleAr: "قصص تفاعلية",
       titleEn: "Interactive Stories",
-      description: "Apprenez à travers des récits",
-      descriptionAr: "تعلم من خلال القصص",
-      descriptionEn: "Learn through stories",
+      description: "Apprenez à travers des récits captivants",
+      descriptionAr: "تعلم من خلال قصص جذابة",
+      descriptionEn: "Learn through captivating stories",
       color: "bg-gradient-to-br from-indigo-100 to-indigo-200 dark:from-indigo-900/30 dark:to-indigo-800/30",
       page: "stories",
       stats: `${progress.storiesRead} ${progress.storiesRead > 1 ? 'histoires lues' : 'histoire lue'}`,
@@ -147,18 +141,18 @@ export default function Dashboard({ onNavigate, recentQuizzes = [], recentStorie
       gradient: "from-rose-500 to-orange-500",
     },
     {
-      icon: Heart,
-      title: "Santé & Bien-être",
-      titleAr: "الصحة والعافية",
-      titleEn: "Health & Wellness",
-      description: "Centres et ressources",
-      descriptionAr: "المراكز والموارد",
-      descriptionEn: "Centers and resources",
+      icon: MapPin,
+      title: "Centres de Santé",
+      titleAr: "مراكز الصحة",
+      titleEn: "Health Centers",
+      description: "Trouvez de l'aide près de chez vous",
+      descriptionAr: "ابحث عن مساعدة قريبة منك",
+      descriptionEn: "Find help near you",
       color: "bg-gradient-to-br from-cyan-100 to-cyan-200 dark:from-cyan-900/30 dark:to-cyan-800/30",
       page: "map",
-      stats: "Trouver un centre",
-      statsAr: "ابحث عن مركز",
-      statsEn: "Find a center",
+      stats: "Centres partenaires",
+      statsAr: "مراكز شريكة",
+      statsEn: "Partner centers",
       gradient: "from-cyan-500 to-blue-500",
     },
   ]
@@ -171,18 +165,16 @@ export default function Dashboard({ onNavigate, recentQuizzes = [], recentStorie
 
   const getGreeting = () => {
     const greetings = {
-      morning: { fr: "Bonjour! Prêt à apprendre?", ar: "صباح الخير! مستعد للتعلم؟", en: "Good morning! Ready to learn?" },
-      afternoon: { fr: "Bon après-midi! Continuez votre apprentissage", ar: "مساء الخير! واصل تعلمك", en: "Good afternoon! Continue your learning" },
-      evening: { fr: "Bonsoir! Détendez-vous et apprenez", ar: "مساء الخير! استرخ وتعلم", en: "Good evening! Relax and learn" }
+      morning: { fr: "Bonjour! 🌅 Prêt à apprendre?", ar: "صباح الخير! 🌅 مستعد للتعلم؟", en: "Good morning! 🌅 Ready to learn?" },
+      afternoon: { fr: "Bon après-midi! ☀️ Continuez votre apprentissage", ar: "مساء الخير! ☀️ واصل تعلمك", en: "Good afternoon! ☀️ Continue your learning" },
+      evening: { fr: "Bonsoir! 🌙 Détendez-vous et apprenez", ar: "مساء الخير! 🌙 استرخ وتعلم", en: "Good evening! 🌙 Relax and learn" }
     }
     return getText(greetings[timeOfDay].fr, greetings[timeOfDay].ar, greetings[timeOfDay].en)
   }
 
-  // Smart recommendations based on user progress
   const getRecommendations = () => {
     const recs = []
     
-    // Recommend quiz if user hasn't completed many
     if (progress.quizzesCompleted < 3 && recentQuizzes.length > 0) {
       recs.push({
         title: getText("Commencez un nouveau quiz", "ابدأ اختباراً جديداً", "Start a new quiz"),
@@ -193,12 +185,12 @@ export default function Dashboard({ onNavigate, recentQuizzes = [], recentStorie
         ),
         icon: Target,
         color: "bg-blue-500/10",
+        iconColor: "text-blue-600",
         action: getText("Commencer", "ابدأ", "Start"),
         page: "quiz",
       })
     }
 
-    // Recommend story if user hasn't read many
     if (progress.storiesRead < 2 && recentStories.length > 0) {
       recs.push({
         title: getText("Lisez une nouvelle histoire", "اقرأ قصة جديدة", "Read a new story"),
@@ -207,14 +199,14 @@ export default function Dashboard({ onNavigate, recentQuizzes = [], recentStorie
           `استكشف: ${recentStories[0]?.titleAr || 'قصة متاحة'}`,
           `Explore: ${recentStories[0]?.titleEn || 'Available story'}`
         ),
-        icon: BookOpen,
+        icon: BookMarked,
         color: "bg-purple-500/10",
+        iconColor: "text-purple-600",
         action: getText("Lire", "اقرأ", "Read"),
         page: "stories",
       })
     }
 
-    // Recommend watching reels
     if (progress.reelsWatched < 5) {
       recs.push({
         title: getText("Regardez un nouveau reel", "شاهد ريلز جديد", "Watch a new reel"),
@@ -223,14 +215,14 @@ export default function Dashboard({ onNavigate, recentQuizzes = [], recentStorie
           "اكتشف أحدث محتوى تعليمي",
           "Discover our latest educational content"
         ),
-        icon: Film,
+        icon: Eye,
         color: "bg-pink-500/10",
+        iconColor: "text-pink-600",
         action: getText("Regarder", "شاهد", "Watch"),
         page: "reels",
       })
     }
 
-    // Level up recommendation
     if (xpProgress >= 70) {
       recs.push({
         title: getText("Proche du niveau suivant!", "قريب من المستوى التالي!", "Close to next level!"),
@@ -241,8 +233,26 @@ export default function Dashboard({ onNavigate, recentQuizzes = [], recentStorie
         ),
         icon: TrendingUp,
         color: "bg-green-500/10",
+        iconColor: "text-green-600",
         action: getText("Continuer", "تابع", "Continue"),
         page: "quiz",
+      })
+    }
+
+    // Recommandation de série
+    if (streak > 0 && streak < 7) {
+      recs.push({
+        title: getText("Maintenez votre série!", "حافظ على سلسلتك!", "Maintain your streak!"),
+        description: getText(
+          `Vous avez une série de ${streak} jour${streak > 1 ? 's' : ''}! Continuez comme ça.`,
+          `لديك سلسلة ${streak} يوم! استمر هكذا.`,
+          `You have a ${streak}-day streak! Keep it up.`
+        ),
+        icon: Flame,
+        color: "bg-orange-500/10",
+        iconColor: "text-orange-600",
+        action: getText("Continuer", "تابع", "Continue"),
+        page: "stories",
       })
     }
 
@@ -252,207 +262,93 @@ export default function Dashboard({ onNavigate, recentQuizzes = [], recentStorie
   const recommendations = getRecommendations()
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-background via-background to-primary/5 transition-all duration-300 `}>
-      {/* Enhanced Header with Level Progress */}
-      <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className={`mx-auto px-4 sm:px-6 lg:px-8 py-6 transition-all duration-300 ${
+    <div className={`min-h-screen bg-gradient-to-br from-background via-background to-primary/5 transition-all duration-300`}>
+      {/* Header avec Navigation */}
+      <div className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10 shadow-sm">
+        <div className={`mx-auto px-4 sm:px-6 lg:px-8 py-4 transition-all duration-300 ${
           isNavOpen ? 'max-w-7xl' : 'max-w-full'
         }`}>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                WellnessXP
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                {getText(
-                  "Votre plateforme de santé sexuelle",
-                  "منصتك للصحة الجنسية",
-                  "Your sexual health platform"
-                )}
-              </p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center shadow-lg">
+                <Heart className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  WellnessXP
+                </h1>
+                <p className="text-xs text-muted-foreground">
+                  {getText(
+                    "Votre plateforme de santé sexuelle",
+                    "منصتك للصحة الجنسية",
+                    "Your sexual health platform"
+                  )}
+                </p>
+              </div>
             </div>
+
+            {/* Stats Header */}
             <div className="hidden md:flex items-center gap-3">
-              {/* Level Badge */}
-              <div className="relative group">
-                <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full border border-primary/30">
-                  <Star className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-bold text-primary">
-                    {getText("Niveau", "المستوى", "Level")} {progress.level}
-                  </span>
+              {/* Niveau */}
+              <div className="flex items-center gap-2 px-3 py-2 bg-card rounded-lg border border-border shadow-sm">
+                <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
+                  <Star className="w-4 h-4 text-white" />
                 </div>
-                {/* Tooltip */}
-                <div className="absolute top-full mt-2 right-0 hidden group-hover:block bg-popover border rounded-lg p-3 shadow-lg w-48 z-50">
-                  <p className="text-xs text-muted-foreground mb-2">
-                    {getText("Progression vers le niveau", "التقدم نحو المستوى", "Progress to level")} {progress.level + 1}
-                  </p>
-                  <div className="w-full bg-secondary/20 rounded-full h-2 mb-1">
-                    <div 
-                      className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all"
-                      style={{ width: `${xpProgress}%` }}
-                    />
-                  </div>
-                  <p className="text-xs font-medium">
-                    {progress.totalXP} / {nextLevelXP} XP
-                  </p>
+                <div>
+                  <p className="text-xs text-muted-foreground">{getText("Niveau", "المستوى", "Level")}</p>
+                  <p className="text-sm font-bold text-primary">{progress.level}</p>
                 </div>
               </div>
 
-              {/* Total XP */}
-              <div className="flex items-center gap-2 px-4 py-2 bg-secondary/10 rounded-full border border-secondary/30">
-                <Zap className="w-4 h-4 text-secondary" />
-                <span className="text-sm font-bold text-secondary">{progress.totalXP} XP</span>
+              {/* XP Total */}
+              <div className="flex items-center gap-2 px-3 py-2 bg-card rounded-lg border border-border shadow-sm">
+                <div className="w-8 h-8 bg-gradient-to-r from-secondary to-accent rounded-full flex items-center justify-center">
+                  <Zap className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">XP Total</p>
+                  <p className="text-sm font-bold text-secondary">{progress.totalXP}</p>
+                </div>
               </div>
 
-              {/* Streak */}
-              <div className="flex items-center gap-2 px-4 py-2 bg-orange-500/10 rounded-full border border-orange-500/30">
-                <Flame className="w-4 h-4 text-orange-500" />
-                <span className="text-sm font-bold text-orange-500">
-                  {streak} {getText("jours", "أيام", "days")}
-                </span>
+              {/* Série */}
+              <div className="flex items-center gap-2 px-3 py-2 bg-card rounded-lg border border-border shadow-sm">
+                <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+                  <Flame className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">{getText("Série", "السلسلة", "Streak")}</p>
+                  <p className="text-sm font-bold text-orange-500">
+                    {streak} {getText("j", "ي", "d")}
+                  </p>
+                </div>
               </div>
-            </div>
-          </div>
-
-          {/* Mobile Stats */}
-          <div className="md:hidden flex items-center gap-2 flex-wrap">
-            <div className="flex items-center gap-1 px-3 py-1 bg-primary/10 rounded-full text-xs">
-              <Star className="w-3 h-3" />
-              <span className="font-medium">Niv. {progress.level}</span>
-            </div>
-            <div className="flex items-center gap-1 px-3 py-1 bg-secondary/10 rounded-full text-xs">
-              <Zap className="w-3 h-3" />
-              <span className="font-medium">{progress.totalXP} XP</span>
-            </div>
-            <div className="flex items-center gap-1 px-3 py-1 bg-orange-500/10 rounded-full text-xs">
-              <Flame className="w-3 h-3" />
-              <span className="font-medium">{streak}j</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className={`mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 transition-all duration-300 ${
+      {/* Contenu Principal */}
+      <main className={`mx-auto px-4 sm:px-6 lg:px-8 py-8 transition-all duration-300 ${
         isNavOpen ? 'max-w-7xl' : 'max-w-full'
       }`}>
-        {/* Greeting Section */}
-        <div className="mb-8 md:mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{getGreeting()}</h2>
-          <p className="text-muted-foreground max-w-2xl text-sm md:text-base">
-            {getText(
-              "Explorez nos ressources complètes sur la santé sexuelle et reproductive. Apprenez à travers des histoires interactives, et connectez-vous avec une communauté bienveillante.",
-              "استكشف مواردنا الشاملة حول الصحة الجنسية والإنجابية. تعلم من خلال القصص التفاعلية، وتواصل مع مجتمع داعم.",
-              "Explore our comprehensive resources on sexual and reproductive health. Learn through interactive stories, and connect with a caring community."
-            )}
-          </p>
-        </div>
-
-        {/* Personalized Recommendations */}
-        {recommendations.length > 0 && (
-          <div className="mb-8 md:mb-12">
-            <h3 className="text-lg md:text-xl font-bold text-foreground mb-4 flex items-center gap-2">
-              <Target className="w-5 h-5 text-primary" />
-              {getText("Recommandations Personnalisées", "توصيات مخصصة", "Personalized Recommendations")}
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {recommendations.map((rec, idx) => {
-                const Icon = rec.icon
-                return (
-                  <Card key={idx} className="border-border/50 hover:shadow-xl transition-all hover:-translate-y-1 duration-300">
-                    <CardContent className="pt-6">
-                      <div className={`w-12 h-12 rounded-xl ${rec.color} flex items-center justify-center mb-4 shadow-inner`}>
-                        <Icon className="w-6 h-6 text-primary" />
-                      </div>
-                      <h4 className="font-semibold text-foreground mb-1 line-clamp-1">{rec.title}</h4>
-                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{rec.description}</p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full bg-transparent hover:bg-primary hover:text-primary-foreground transition-colors"
-                        onClick={() => onNavigate?.(rec.page)}
-                      >
-                        {rec.action}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Progress Stats */}
-        <div className="mb-8 md:mb-12">
-          <h3 className="text-lg md:text-xl font-bold text-foreground mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-secondary" />
-            {getText("Votre Progression", "تقدمك", "Your Progress")}
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            <Card className="border-border/50 bg-gradient-to-br from-primary/5 to-transparent hover:shadow-lg transition-shadow">
-              <CardContent className="pt-4 md:pt-6">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <p className="text-xs md:text-sm text-muted-foreground mb-1">
-                      {getText("XP Cette Semaine", "نقاط الخبرة هذا الأسبوع", "XP This Week")}
-                    </p>
-                    <p className="text-xl md:text-2xl font-bold text-primary">+{weeklyXP}</p>
-                  </div>
-                  <TrendingUp className="w-6 h-6 md:w-8 md:h-8 text-primary/30 mt-2 md:mt-0" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-border/50 bg-gradient-to-br from-secondary/5 to-transparent hover:shadow-lg transition-shadow">
-              <CardContent className="pt-4 md:pt-6">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <p className="text-xs md:text-sm text-muted-foreground mb-1">
-                      {getText("Activités", "الأنشطة", "Activities")}
-                    </p>
-                    <p className="text-xl md:text-2xl font-bold text-secondary">{totalActivities}</p>
-                  </div>
-                  <CheckCircle2 className="w-6 h-6 md:w-8 md:h-8 text-secondary/30 mt-2 md:mt-0" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-border/50 bg-gradient-to-br from-accent/5 to-transparent hover:shadow-lg transition-shadow">
-              <CardContent className="pt-4 md:pt-6">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <p className="text-xs md:text-sm text-muted-foreground mb-1">
-                      {getText("Badges", "الشارات", "Badges")}
-                    </p>
-                    <p className="text-xl md:text-2xl font-bold text-accent">
-                      {earnedBadgesCount}/{totalBadgesCount}
-                    </p>
-                  </div>
-                  <Award className="w-6 h-6 md:w-8 md:h-8 text-accent/30 mt-2 md:mt-0" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-border/50 bg-gradient-to-br from-orange-500/5 to-transparent hover:shadow-lg transition-shadow">
-              <CardContent className="pt-4 md:pt-6">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <p className="text-xs md:text-sm text-muted-foreground mb-1">
-                      {getText("Série", "السلسلة", "Streak")}
-                    </p>
-                    <p className="text-xl md:text-2xl font-bold text-orange-500">
-                      {streak} {getText("j", "ي", "d")}
-                    </p>
-                  </div>
-                  <Flame className="w-6 h-6 md:w-8 md:h-8 text-orange-500/30 mt-2 md:mt-0" />
-                </div>
-              </CardContent>
-            </Card>
+        {/* Section Bienvenue */}
+        <div className="mb-8">
+          <div className="bg-gradient-to-r from-primary to-secondary rounded-2xl p-6 text-white shadow-xl">
+            <h2 className="text-2xl font-bold mb-2">{getGreeting()}</h2>
+            <p className="text-primary-foreground/80 max-w-2xl">
+              {getText(
+                "Explorez nos ressources complètes sur la santé sexuelle et reproductive. Apprenez à votre rythme dans un environnement bienveillant.",
+                "استكشف مواردنا الشاملة حول الصحة الجنسية والإنجابية. تعلم بسرعتك الخاصة في بيئة داعمة.",
+                "Explore our comprehensive resources on sexual and reproductive health. Learn at your own pace in a supportive environment."
+              )}
+            </p>
           </div>
         </div>
 
-        {/* Features Grid */}
-        <div className="mb-8 md:mb-12">
-          <h3 className="text-lg md:text-xl font-bold text-foreground mb-4">
+        {/* Grille des Fonctionnalités */}
+        <div className="mb-8">
+          <h3 className="text-xl font-bold text-foreground mb-6">
             {getText("Explorez nos Ressources", "استكشف مواردنا", "Explore Our Resources")}
           </h3>
           <div className={`grid gap-4 md:gap-6 transition-all duration-300 ${
@@ -460,40 +356,42 @@ export default function Dashboard({ onNavigate, recentQuizzes = [], recentStorie
               ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' 
               : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
           }`}>
-            {features.map((feature) => {
+            {features.map((feature, index) => {
               const Icon = feature.icon
               return (
                 <Card
                   key={feature.title}
-                  className="group hover:shadow-xl transition-all hover:-translate-y-2 cursor-pointer border-border/50 hover:border-primary/30 duration-300 overflow-hidden relative"
+                  className="group hover:shadow-2xl transition-all hover:-translate-y-1 cursor-pointer border-border/50 hover:border-primary/30 duration-300 overflow-hidden bg-card"
                   onClick={() => onNavigate?.(feature.page)}
                 >
-                  {/* Gradient overlay on hover */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
-                  
-                  <CardHeader className="relative">
-                    <div
-                      className={`w-12 h-12 md:w-14 md:h-14 rounded-xl ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}
-                    >
-                      <Icon className="w-6 h-6 md:w-7 md:h-7 text-primary group-hover:rotate-12 transition-transform" />
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div
+                        className={`w-12 h-12 rounded-xl ${feature.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg`}
+                      >
+                        <Icon className="w-6 h-6 text-primary" />
+                      </div>
+                      <div className="text-2xl font-bold text-muted-foreground">0{index + 1}</div>
                     </div>
-                    <CardTitle className="text-base md:text-lg">
+                    <CardTitle className="text-lg text-foreground">
                       {getText(feature.title, feature.titleAr, feature.titleEn)}
                     </CardTitle>
-                    <CardDescription className="text-xs md:text-sm">
+                    <CardDescription className="text-muted-foreground">
                       {getText(feature.description, feature.descriptionAr, feature.descriptionEn)}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="relative">
-                    <p className="text-xs text-muted-foreground mb-3 font-medium">
-                      {getText(feature.stats, feature.statsAr, feature.statsEn)}
-                    </p>
-                    <Button
-                      variant="outline"
-                      className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all bg-transparent text-xs md:text-sm"
-                    >
-                      {getText("Découvrir", "اكتشف", "Discover")}
-                    </Button>
+                  <CardContent>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-muted-foreground">
+                        {getText(feature.stats, feature.statsAr, feature.statsEn)}
+                      </span>
+                      <Button
+                        size="sm"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground transition-colors"
+                      >
+                        {getText("Explorer", "اكتشف", "Explore")}
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               )
@@ -501,55 +399,239 @@ export default function Dashboard({ onNavigate, recentQuizzes = [], recentStorie
           </div>
         </div>
 
-        {/* Platform Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-          <Card className="border-border/50 bg-gradient-to-br from-primary/5 via-primary/10 to-transparent hover:shadow-lg transition-shadow">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">
-                    {getText("Ressources Disponibles", "الموارد المتاحة", "Available Resources")}
-                  </p>
-                  <p className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                    500+
-                  </p>
-                </div>
-                <BookOpen className="w-10 h-10 text-primary/20" />
-              </div>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Colonne Gauche - Recommandations et Progression */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Recommandations Personnalisées */}
+            {recommendations.length > 0 && (
+              <Card className="border-border/50 bg-card">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-foreground">
+                    <Target className="w-5 h-5 text-primary" />
+                    {getText("Recommandations Personnalisées", "توصيات مخصصة", "Personalized Recommendations")}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {recommendations.map((rec, idx) => {
+                    const Icon = rec.icon
+                    return (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-4 p-4 rounded-lg border border-border hover:border-primary/30 transition-colors group cursor-pointer"
+                        onClick={() => onNavigate?.(rec.page)}
+                      >
+                        <div className={`w-12 h-12 rounded-lg ${rec.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                          <Icon className={`w-6 h-6 ${rec.iconColor}`} />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-foreground">{rec.title}</h4>
+                          <p className="text-sm text-muted-foreground">{rec.description}</p>
+                        </div>
+                        <Button
+                          size="sm"
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                        >
+                          {rec.action}
+                        </Button>
+                      </div>
+                    )
+                  })}
+                </CardContent>
+              </Card>
+            )}
 
-          <Card className="border-border/50 bg-gradient-to-br from-secondary/5 via-secondary/10 to-transparent hover:shadow-lg transition-shadow">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">
-                    {getText("Utilisateurs Actifs", "المستخدمون النشطون", "Active Users")}
-                  </p>
-                  <p className="text-3xl font-bold bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">
-                    10K+
-                  </p>
-                </div>
-                <Users className="w-10 h-10 text-secondary/20" />
-              </div>
-            </CardContent>
-          </Card>
+            {/* Statistiques de Progression */}
+            <Card className="border-border/50 bg-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-foreground">
+                  <TrendingUp className="w-5 h-5 text-secondary" />
+                  {getText("Votre Progression", "تقدمك", "Your Progress")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  {/* XP Hebdomadaire */}
+                  <div className="bg-gradient-to-br from-primary/5 to-transparent p-4 rounded-lg border border-border">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-muted-foreground">{getText("XP Semaine", "نقاط الأسبوع", "Weekly XP")}</span>
+                      <TrendingUp className="w-4 h-4 text-primary" />
+                    </div>
+                    <p className="text-2xl font-bold text-primary">+{weeklyXP}</p>
+                    <div className="w-full bg-secondary/20 rounded-full h-2 mt-2">
+                      <div 
+                        className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all"
+                        style={{ width: `${Math.min(100, (weeklyXP / 500) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
 
-          <Card className="border-border/50 bg-gradient-to-br from-accent/5 via-accent/10 to-transparent hover:shadow-lg transition-shadow">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">
-                    {getText("Support Disponible", "الدعم المتاح", "Available Support")}
-                  </p>
-                  <p className="text-3xl font-bold bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
-                    24/7
+                  {/* Activités Total */}
+                  <div className="bg-gradient-to-br from-secondary/5 to-transparent p-4 rounded-lg border border-border">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-muted-foreground">{getText("Activités", "الأنشطة", "Activities")}</span>
+                      <CheckCircle2 className="w-4 h-4 text-secondary" />
+                    </div>
+                    <p className="text-2xl font-bold text-secondary">{totalActivities}</p>
+                    <div className="flex gap-1 mt-2">
+                      {[...Array(5)].map((_, i) => (
+                        <div
+                          key={i}
+                          className={`flex-1 h-2 rounded-full ${
+                            i < Math.min(5, Math.floor(totalActivities / 2)) 
+                              ? 'bg-secondary' 
+                              : 'bg-muted'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Badges */}
+                  <div className="bg-gradient-to-br from-accent/5 to-transparent p-4 rounded-lg border border-border">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-muted-foreground">{getText("Badges", "الشارات", "Badges")}</span>
+                      <Award className="w-4 h-4 text-accent" />
+                    </div>
+                    <p className="text-2xl font-bold text-accent">
+                      {earnedBadgesCount}<span className="text-sm text-muted-foreground">/{totalBadgesCount}</span>
+                    </p>
+                    <div className="flex gap-1 mt-2">
+                      {[...Array(5)].map((_, i) => (
+                        <div
+                          key={i}
+                          className={`flex-1 h-2 rounded-full ${
+                            i < Math.min(5, Math.floor((earnedBadgesCount / totalBadgesCount) * 5))
+                              ? 'bg-accent' 
+                              : 'bg-muted'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Série Actuelle */}
+                  <div className="bg-gradient-to-br from-orange-500/5 to-transparent p-4 rounded-lg border border-border">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-muted-foreground">{getText("Série", "السلسلة", "Streak")}</span>
+                      <Flame className="w-4 h-4 text-orange-500" />
+                    </div>
+                    <p className="text-2xl font-bold text-orange-500">{streak} {getText("j", "ي", "d")}</p>
+                    <div className="flex gap-1 mt-2">
+                      {[...Array(7)].map((_, i) => (
+                        <div
+                          key={i}
+                          className={`flex-1 h-2 rounded-full ${
+                            i < streak ? 'bg-orange-500' : 'bg-muted'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Colonne Droite - Statistiques Globales */}
+          <div className="space-y-6">
+            {/* Progression du Niveau */}
+            <Card className="border-border/50 bg-card">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-foreground">{getText("Progression du Niveau", "تقدم المستوى", "Level Progress")}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center mb-4">
+                  <div className="w-20 h-20 mx-auto mb-3 relative">
+                    <div className="w-full h-full rounded-full bg-muted flex items-center justify-center">
+                      <div 
+                        className="absolute w-full h-full rounded-full border-4 border-transparent"
+                        style={{
+                          background: `conic-gradient(oklch(var(--primary)) ${xpProgress}%, oklch(var(--muted)) 0)`,
+                          mask: 'radial-gradient(white 55%, transparent 56%)',
+                          WebkitMask: 'radial-gradient(white 55%, transparent 56%)'
+                        }}
+                      />
+                      <div className="relative z-10">
+                        <Star className="w-8 h-8 text-primary" />
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-2xl font-bold text-primary">Niveau {progress.level}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {progress.totalXP} / {nextLevelXP} XP
                   </p>
                 </div>
-                <Heart className="w-10 h-10 text-accent/20" />
-              </div>
-            </CardContent>
-          </Card>
+                <div className="w-full bg-muted rounded-full h-3">
+                  <div 
+                    className="bg-gradient-to-r from-primary to-secondary h-3 rounded-full transition-all duration-500"
+                    style={{ width: `${xpProgress}%` }}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Statistiques de la Plateforme */}
+            <Card className="border-border/50 bg-card">
+              <CardHeader>
+                <CardTitle className="text-foreground">{getText("Statistiques", "الإحصائيات", "Statistics")}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <div className="flex items-center gap-3">
+                    <BookOpen className="w-8 h-8 text-primary" />
+                    <div>
+                      <p className="font-semibold text-foreground">500+</p>
+                      <p className="text-sm text-muted-foreground">{getText("Ressources", "الموارد", "Resources")}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <div className="flex items-center gap-3">
+                    <Users className="w-8 h-8 text-secondary" />
+                    <div>
+                      <p className="font-semibold text-foreground">10K+</p>
+                      <p className="text-sm text-muted-foreground">{getText("Utilisateurs", "المستخدمين", "Users")}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <div className="flex items-center gap-3">
+                    <Heart className="w-8 h-8 text-accent" />
+                    <div>
+                      <p className="font-semibold text-foreground">24/7</p>
+                      <p className="text-sm text-muted-foreground">{getText("Support", "الدعم", "Support")}</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Appel à l'Action */}
+            <Card className="border-border/50 bg-gradient-to-br from-primary to-secondary text-primary-foreground">
+              <CardContent className="pt-6 text-center">
+                <Brain className="w-12 h-12 mx-auto mb-4 text-primary-foreground/80" />
+                <h3 className="font-bold text-lg mb-2">
+                  {getText("Commencez votre apprentissage", "ابدأ رحلة التعلم", "Start Your Learning Journey")}
+                </h3>
+                <p className="text-primary-foreground/80 text-sm mb-4">
+                  {getText(
+                    "Découvrez nos ressources éducatives complètes",
+                    "اكتشف مواردنا التعليمية الشاملة",
+                    "Discover our comprehensive educational resources"
+                  )}
+                </p>
+                <Button 
+                  size="lg" 
+                  className="bg-background text-foreground hover:bg-background/90 w-full"
+                  onClick={() => onNavigate?.('stories')}
+                >
+                  {getText("Explorer Maintenant", "اكتشف الآن", "Explore Now")}
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
     </div>

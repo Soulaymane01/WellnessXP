@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { db } from '@/lib/firebase-config'
 import { collection, doc, setDoc } from 'firebase/firestore'
 import { seedReels } from '@/lib/seed-data'
+import { seedBadges, seedQuizzes, seedStories, seedHealthCenters } from '@/lib/seed-data'
 
 export async function POST(request: Request) {
   try {

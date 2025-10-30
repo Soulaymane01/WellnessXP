@@ -1,3 +1,4 @@
+// /app/stories/[id]/page.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -53,7 +54,7 @@ interface Story {
 }
 
 interface StoryPlayerProps {
-  story: any
+  story: Story
 }
 
 export default function StoryPlayer({ story }: StoryPlayerProps) {
@@ -91,6 +92,8 @@ export default function StoryPlayer({ story }: StoryPlayerProps) {
     return fr
   }
 
+  console.log(story)
+
   // Safety checks for story data
   if (!story || !story.chapters || !Array.isArray(story.chapters) || story.chapters.length === 0) {
     return (
@@ -109,13 +112,13 @@ export default function StoryPlayer({ story }: StoryPlayerProps) {
     )
   }
 
-  const currentChapter = story.chapters.find((ch: any) => ch.id === currentChapterId)
+  const currentChapter = story.chapters.find((ch: Chapter) => ch.id === currentChapterId)
   const progress = (visitedChapters.size / story.chapters.length) * 100
 
-  const getTitle = () => getText(story.title, story.titleAr, story.titleEn)
+  const getTitle = () => getText(story.title || '', story.titleAr || '', story.titleEn || '')
   const getContent = () => {
     if (!currentChapter) return ''
-    return getText(currentChapter.content, currentChapter.contentAr, currentChapter.contentEn)
+    return getText(currentChapter.content || '', currentChapter.contentAr || '', currentChapter.contentEn || '')
   }
 
   const handleChoiceSelect = async (choice: Choice) => {
@@ -287,7 +290,7 @@ export default function StoryPlayer({ story }: StoryPlayerProps) {
               {getText("Retour", "رجوع", "Back")}
             </Button>
             <div className="flex items-center gap-3">
-              <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-purple-500/10 rounded-full">
+              <div className="flex items-center gap-2 px-3 py-1 bg-purple-500/10 rounded-full">
                 <Award className="w-4 h-4 text-purple-600" />
                 <span className="text-sm font-semibold text-purple-600">{totalXP} XP</span>
               </div>
@@ -349,7 +352,7 @@ export default function StoryPlayer({ story }: StoryPlayerProps) {
             )}
 
             {/* Choices */}
-            {!showFeedback && currentChapter && currentChapter.choices.length > 0 && (
+            {!showFeedback && currentChapter && currentChapter.choices && currentChapter.choices.length > 0 && (
               <div className="space-y-3">
                 <p className="text-sm font-semibold text-muted-foreground mb-4">
                   {getText("Que faites-vous?", "ماذا تفعل؟", "What do you do?")}

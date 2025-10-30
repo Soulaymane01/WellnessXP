@@ -1,6 +1,6 @@
 "use client"
 
-import { Home, BookOpen, Film, MapPin, User } from "lucide-react"
+import { Home, BookOpen, Film, MapPin, User, Trophy } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -10,6 +10,7 @@ const navItems = [
   { id: "courses", label: "courses", icon: Film, href: "/courses" },
   { id: "centers", label: "centers", icon: MapPin, href: "/centers" },
   { id: "profile", label: "Profil", icon: User, href: "/profile" },
+  { id: "rewards", label: "rewards", icon: Trophy, href: "/rewards" },
 ]
 
 export function MobileNav() {

@@ -328,13 +328,13 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
         </div>
 
         {/* Scrollable Reels Container */}
-        <div className="flex-1 flex items-center justify-center p-4 lg:p-8">
+        <div className="flex-1 flex flex-col items-center justify-center p-4 lg:p-8">
           <div
             ref={containerRef}
             onScroll={handleScroll}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
-            className="w-full max-w-lg h-[calc(100vh-120px)] overflow-y-scroll snap-y snap-mandatory scroll-smooth rounded-3xl"
+            className="w-full max-w-lg h-[calc(100vh-120px)] lg:h-[calc(100vh-120px)] overflow-y-scroll snap-y snap-mandatory scroll-smooth rounded-3xl"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {reels.map((reel, index) => {
@@ -451,23 +451,25 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
         })}
       </div>
 
-      {/* Mobile Progress */}
-      <div className="lg:hidden mt-4 p-4 bg-secondary/10 rounded-xl border border-border w-full max-w-lg mx-auto overflow-hidden">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium truncate">
-            {getText("Progression", "التقدم", "Progress")}
-          </span>
-          <span className="text-sm font-bold text-violet-600 truncate">
-            {watchedReels.length} / {reels.length}
-          </span>
-        </div>
+      {/* Mobile Progress - Below the reels container */}
+      <div className="lg:hidden w-full max-w-lg mx-auto px-4 pb-4">
+        <div className="p-4 bg-secondary/10 rounded-xl border border-border overflow-hidden">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium truncate">
+              {getText("Progression", "التقدم", "Progress")}
+            </span>
+            <span className="text-sm font-bold text-violet-600 truncate">
+              {watchedReels.length} / {reels.length}
+            </span>
+          </div>
 
-        {/* Progress Bar */}
-        <div className="w-full bg-secondary/30 rounded-full h-2 overflow-hidden">
-          <div 
-            className="bg-gradient-to-r from-violet-500 to-purple-500 h-2 rounded-full transition-all duration-700 ease-in-out"
-            style={{ width: `${completionRate}%` }}
-          />
+          {/* Progress Bar */}
+          <div className="w-full bg-secondary/30 rounded-full h-2 overflow-hidden">
+            <div 
+              className="bg-gradient-to-r from-violet-500 to-purple-500 h-2 rounded-full transition-all duration-700 ease-in-out"
+              style={{ width: `${completionRate}%` }}
+            />
+          </div>
         </div>
       </div>
     </div>

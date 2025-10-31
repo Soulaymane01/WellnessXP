@@ -162,9 +162,7 @@ export default function StoryPlayer({ story }: StoryPlayerProps) {
 
   if (!currentChapter && !isCompleted) {
     return (
-      <div className={`min-h-screen bg-gradient-to-br from-background via-background to-purple-500/5 transition-all duration-300 flex items-center justify-center ${
-        isNavOpen ? 'md:ml-64' : 'md:ml-20'
-      }`}>
+      <div className={`min-h-screen bg-gradient-to-br from-background via-background to-purple-500/5 transition-all duration-300 flex items-center justify-center `}>
         <div className="text-center">
           <p className="text-muted-foreground mb-4">
             {getText("Chapitre introuvable", "الفصل غير موجود", "Chapter not found")}
@@ -179,9 +177,7 @@ export default function StoryPlayer({ story }: StoryPlayerProps) {
 
   if (isCompleted) {
     return (
-      <div className={`min-h-screen bg-gradient-to-br from-background via-background to-purple-500/5 transition-all duration-300 ${
-        isNavOpen ? 'md:ml-64' : 'md:ml-20'
-      }`}>
+      <div className={`min-h-screen bg-gradient-to-br from-background via-background to-purple-500/5 transition-all duration-300 `}>
         <div className="max-w-3xl mx-auto px-4 py-12">
           <Card className="border-border/50 overflow-hidden shadow-2xl">
             <CardContent className="p-8 md:p-12 text-center">
@@ -271,9 +267,7 @@ export default function StoryPlayer({ story }: StoryPlayerProps) {
   }
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-background via-background to-purple-500/5 transition-all duration-300 ${
-      isNavOpen ? 'md:ml-64' : 'md:ml-20'
-    }`}>
+    <div className={`min-h-screen bg-gradient-to-br from-background via-background to-purple-500/5 transition-all duration-300 `}>
       {/* Header */}
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

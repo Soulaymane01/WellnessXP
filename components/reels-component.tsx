@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { ChevronUp, ChevronDown, Volume2, VolumeX, Sparkles, Award, Film, CheckCircle2, Trophy, Brain, Clock, Target } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect, useRef } from "react"
+import { Volume2, VolumeX, Sparkles, Award, Film, CheckCircle2, Trophy, Brain } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useUser } from "@/lib/user-context"
 
@@ -45,10 +44,15 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
     show: false 
   })
   const [reelProgress, setReelProgress] = useState(0)
+  const [isScrolling, setIsScrolling] = useState(false)
+  
+  const containerRef = useRef<HTMLDivElement>(null)
+  const touchStartRef = useRef(0)
+  const scrollTimeoutRef = useRef<NodeJS.Timeout>()
 
   const currentReel = reels[currentReelIndex]
 
-  // Load watched reels from localStorage on mount
+  // Load watched reels from storage
   useEffect(() => {
     if (!userId) return
     
@@ -63,7 +67,6 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
     }
   }, [userId])
 
-  // Save watched reels to localStorage
   const saveWatchedReels = (watched: string[]) => {
     if (!userId) return
     localStorage.setItem(`reelsProgress_${userId}`, JSON.stringify(watched))
@@ -84,44 +87,94 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
       const reel = reels.find((r) => r.id === reelId)
       if (!reel) return
 
-      // Update local state
       const newWatchedReels = [...watchedReels, reelId]
       setWatchedReels(newWatchedReels)
       saveWatchedReels(newWatchedReels)
 
-      // Add points via context (includes badge checking and activity logging)
       await addReels(reel.points, getReelTitle(reel))
 
-      // Show XP notification
       setXpNotification({ points: reel.points, show: true })
       setTimeout(() => setXpNotification({ points: 0, show: false }), 2000)
     }
   }
 
-  const handleNextReel = () => {
-    if (currentReelIndex < reels.length - 1) {
-      markReelAsWatched(currentReel.id)
-      setCurrentReelIndex(currentReelIndex + 1)
-      setReelProgress(0)
+  // Handle scroll snap
+  const handleScroll = () => {
+    if (!containerRef.current) return
+    
+    setIsScrolling(true)
+    
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current)
+    }
+
+    scrollTimeoutRef.current = setTimeout(() => {
+      const container = containerRef.current
+      if (!container) return
+
+      const scrollPosition = container.scrollTop
+      const itemHeight = container.clientHeight
+      const newIndex = Math.round(scrollPosition / itemHeight)
+      
+      if (newIndex !== currentReelIndex && newIndex >= 0 && newIndex < reels.length) {
+        if (newIndex > currentReelIndex) {
+          markReelAsWatched(reels[currentReelIndex].id)
+        }
+        setCurrentReelIndex(newIndex)
+      }
+      
+      setIsScrolling(false)
+    }, 150)
+  }
+
+  // Handle touch gestures
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartRef.current = e.touches[0].clientY
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const touchEnd = e.changedTouches[0].clientY
+    const diff = touchStartRef.current - touchEnd
+
+    if (Math.abs(diff) > 50) {
+      if (diff > 0 && currentReelIndex < reels.length - 1) {
+        // Swipe up - next reel
+        markReelAsWatched(currentReel.id)
+        containerRef.current?.scrollTo({
+          top: (currentReelIndex + 1) * window.innerHeight,
+          behavior: 'smooth'
+        })
+      } else if (diff < 0 && currentReelIndex > 0) {
+        // Swipe down - previous reel
+        containerRef.current?.scrollTo({
+          top: (currentReelIndex - 1) * window.innerHeight,
+          behavior: 'smooth'
+        })
+      }
     }
   }
 
-  const handlePreviousReel = () => {
-    if (currentReelIndex > 0) {
-      setCurrentReelIndex(currentReelIndex - 1)
-      setReelProgress(0)
-    }
-  }
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "ArrowUp") handlePreviousReel()
-    if (e.key === "ArrowDown") handleNextReel()
-  }
-
+  // Keyboard navigation
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowUp" && currentReelIndex > 0) {
+        containerRef.current?.scrollTo({
+          top: (currentReelIndex - 1) * window.innerHeight,
+          behavior: 'smooth'
+        })
+      }
+      if (e.key === "ArrowDown" && currentReelIndex < reels.length - 1) {
+        markReelAsWatched(currentReel.id)
+        containerRef.current?.scrollTo({
+          top: (currentReelIndex + 1) * window.innerHeight,
+          behavior: 'smooth'
+        })
+      }
+    }
+
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [currentReelIndex])
+  }, [currentReelIndex, reels.length])
 
   // Sync mute state with settings
   useEffect(() => {
@@ -142,16 +195,7 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
     }, 100)
     
     return () => clearInterval(interval)
-  }, [currentReelIndex, currentReel.duration])
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'easy': return 'bg-green-500/20 text-green-300 border-green-500/30'
-      case 'medium': return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30'
-      case 'hard': return 'bg-red-500/20 text-red-300 border-red-500/30'
-      default: return 'bg-gray-500/20 text-gray-300 border-gray-500/30'
-    }
-  }
+  }, [currentReelIndex, currentReel?.duration])
 
   const completionRate = reels.length > 0 ? (watchedReels.length / reels.length) * 100 : 0
 
@@ -169,7 +213,7 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-violet-500/5">
-      {/* Simplified Header */}
+      {/* Header */}
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
@@ -197,42 +241,42 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
       </div>
 
       <div className="flex flex-col lg:flex-row max-w-7xl mx-auto">
-        {/* Simplified Sidebar - Learning Path */}
+        {/* Sidebar - Learning Path */}
         <div className="hidden lg:flex flex-col w-80 bg-card/30 backdrop-blur-sm border-r border-border p-6 overflow-y-auto max-h-[calc(100vh-73px)] sticky top-[73px]">
           <div className="mb-6">
-          {/* Header */}
-          <div className="flex items-center gap-2 mb-4">
-            <Brain className="w-5 h-5 text-violet-600 flex-shrink-0" />
-            <h3 className="text-lg font-bold truncate">
-              {getText("Parcours d'apprentissage", "مسار التعلم", "Learning Path")}
-            </h3>
-          </div>
-
-          {/* Completion Stats */}
-          <div className="bg-secondary/20 rounded-xl p-4 mb-4 w-full overflow-hidden">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-muted-foreground truncate">
-                {getText("Progression", "التقدم", "Progress")}
-              </span>
-              <span className="text-lg font-bold text-violet-600">
-                {Math.round(completionRate)}%
-              </span>
+            {/* Header */}
+            <div className="flex items-center gap-2 mb-4">
+              <Brain className="w-5 h-5 text-violet-600 flex-shrink-0" />
+              <h3 className="text-lg font-bold truncate">
+                {getText("Parcours d'apprentissage", "مسار التعلم", "Learning Path")}
+              </h3>
             </div>
 
-            {/* Progress Bar */}
-            <div className="w-full bg-secondary/50 rounded-full h-2 overflow-hidden">
-              <div
-                className="bg-gradient-to-r from-violet-500 to-purple-500 h-2 rounded-full transition-all duration-700 ease-in-out"
-                style={{ width: `${completionRate}%` }}
-              />
-            </div>
+            {/* Completion Stats */}
+            <div className="bg-secondary/20 rounded-xl p-4 mb-4 w-full overflow-hidden">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-muted-foreground truncate">
+                  {getText("Progression", "التقدم", "Progress")}
+                </span>
+                <span className="text-lg font-bold text-violet-600">
+                  {Math.round(completionRate)}%
+                </span>
+              </div>
 
-            {/* Completed reels */}
-            <p className="text-xs text-muted-foreground mt-2 truncate">
-              {watchedReels.length} / {reels.length} {getText("complétés", "مكتمل", "completed")}
-            </p>
+              {/* Progress Bar */}
+              <div className="w-full bg-secondary/50 rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-violet-500 to-purple-500 h-2 rounded-full transition-all duration-700 ease-in-out"
+                  style={{ width: `${completionRate}%` }}
+                />
+              </div>
+
+              {/* Completed reels */}
+              <p className="text-xs text-muted-foreground mt-2 truncate">
+                {watchedReels.length} / {reels.length} {getText("complétés", "مكتمل", "completed")}
+              </p>
+            </div>
           </div>
-        </div>
 
           {/* Reels List */}
           <div className="space-y-2">
@@ -246,7 +290,10 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
                   onClick={() => {
                     if (currentReelIndex !== index) {
                       markReelAsWatched(currentReel.id)
-                      setCurrentReelIndex(index)
+                      containerRef.current?.scrollTo({
+                        top: index * (containerRef.current?.clientHeight || 0),
+                        behavior: 'smooth'
+                      })
                     }
                   }}
                   disabled={isPending}
@@ -280,21 +327,41 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
           </div>
         </div>
 
-        {/* Main Reel Display - KEPT AS IS */}
-        <div className="flex-1 flex items-center justify-center p-4 lg:p-8 min-h-[calc(100vh-73px)]">
-          <div className="w-full max-w-lg">
-            {/* Video Container */}
-            <div className="relative">
-              <div
-                className={`w-full aspect-[9/16] rounded-3xl bg-gradient-to-br ${currentReel.videoColor} shadow-2xl flex flex-col items-center justify-center relative overflow-hidden group`}
-              >
+        {/* Scrollable Reels Container */}
+        <div className="flex-1 flex items-center justify-center p-4 lg:p-8">
+          <div
+            ref={containerRef}
+            onScroll={handleScroll}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            className="w-full max-w-lg h-[calc(100vh-120px)] overflow-y-scroll snap-y snap-mandatory scroll-smooth rounded-3xl"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {reels.map((reel, index) => {
+              const isWatched = watchedReels.includes(reel.id)
+              const isCurrent = index === currentReelIndex
+              const reelTitle = getReelTitle(reel)
+              const reelDescription = getReelDescription(reel)
+              const reelTopic = getReelTopic(reel)
+
+              return (
+                <div
+                  key={reel.id}
+                  className="h-full w-full snap-start snap-always relative flex items-center justify-center"
+                >
+                  {/* Reel Content */}
+                  <div
+                    className={`w-full h-full bg-gradient-to-br ${reel.videoColor} rounded-3xl flex flex-col items-center justify-center relative overflow-hidden shadow-2xl`}
+                  >
                 {/* Progress Bar */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-white/20 z-20">
-                  <div 
-                    className="h-full bg-white transition-all duration-100"
-                    style={{ width: `${reelProgress}%` }}
-                  />
-                </div>
+                {isCurrent && (
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-white/20 z-20 rounded-t-3xl overflow-hidden">
+                    <div 
+                      className="h-full bg-white transition-all duration-100"
+                      style={{ width: `${reelProgress}%` }}
+                    />
+                  </div>
+                )}
 
                 {/* Background Pattern */}
                 <div className="absolute inset-0 opacity-10">
@@ -305,22 +372,22 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
                 </div>
 
                 {/* Content */}
-                <div className="relative z-10 text-center px-6">
-                  <div className="text-7xl mb-6 animate-bounce-slow">{currentReel.icon}</div>
+                <div className="relative z-10 text-center px-6 max-w-2xl">
+                  <div className="text-7xl mb-6 animate-bounce-slow">{reel.icon}</div>
                   <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                    {getReelTitle(currentReel)}
+                    {reelTitle}
                   </h2>
                   <p className="text-white/90 text-sm md:text-base leading-relaxed">
-                    {getReelDescription(currentReel)}
+                    {reelDescription}
                   </p>
                 </div>
 
                 {/* Top Badges */}
                 <div className="absolute top-4 left-4 flex flex-col gap-2">
                   <Badge className="bg-black/50 text-white backdrop-blur-sm border-white/20">
-                    {getReelTopic(currentReel)}
+                    {reelTopic}
                   </Badge>
-                  {currentReel.educational && (
+                  {reel.educational && (
                     <Badge className="bg-yellow-500/80 text-white backdrop-blur-sm border-yellow-400/50">
                       <Sparkles className="w-3 h-3 mr-1" />
                       {getText("Éducatif", "تعليمي", "Educational")}
@@ -329,13 +396,13 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
                 </div>
 
                 <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm">
-                  {currentReel.duration}s
+                  {reel.duration}s
                 </div>
 
                 {/* Watched Indicator */}
-                {watchedReels.includes(currentReel.id) && (
-                  <div className="absolute top-18 left-4 bg-green-500 text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
-                    <span>✓</span>
+                {isWatched && (
+                  <div className="absolute top-20 left-4 bg-green-500 text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
+                    <CheckCircle2 className="w-4 h-4" />
                     {getText("Regardé", "مشاهدة", "Watched")}
                   </div>
                 )}
@@ -350,12 +417,17 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
 
                 <div className="absolute bottom-4 right-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white px-4 py-2 rounded-full font-bold text-lg shadow-lg flex items-center gap-2">
                   <Award className="w-5 h-5" />
-                  +{currentReel.points} XP
+                  +{reel.points} XP
+                </div>
+
+                {/* Progress Indicator */}
+                <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-sm">
+                  {index + 1} / {reels.length}
                 </div>
 
                 {/* XP Notification */}
-                {xpNotification.show && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                {isCurrent && xpNotification.show && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
                     <div className="bg-gradient-to-r from-violet-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold text-2xl animate-bounce shadow-2xl flex items-center gap-3">
                       <Sparkles className="w-6 h-6" />
                       +{xpNotification.points} XP!
@@ -365,8 +437,8 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
                 )}
 
                 {/* Loading Overlay */}
-                {isPending && (
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-sm z-20">
+                {isPending && isCurrent && (
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-sm z-20 rounded-3xl">
                     <div className="bg-white text-gray-900 px-6 py-3 rounded-xl font-semibold flex items-center gap-2">
                       <div className="w-4 h-4 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
                       {getText("Enregistrement...", "جاري الحفظ...", "Saving...")}
@@ -374,61 +446,32 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
                   </div>
                 )}
               </div>
-
-              {/* Navigation Buttons */}
-              <div className="flex items-center justify-center gap-4 mt-6">
-                <Button
-                  onClick={handlePreviousReel}
-                  disabled={currentReelIndex === 0}
-                  size="lg"
-                  className="rounded-full bg-card hover:bg-secondary border-2 border-border"
-                >
-                  <ChevronUp size={24} className="text-foreground" />
-                </Button>
-                
-                <div className="flex flex-col items-center gap-1">
-                  <span className="text-sm font-medium text-foreground">
-                    {currentReelIndex + 1} / {reels.length}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {watchedReels.length} {getText("complétés", "مكتمل", "completed")}
-                  </span>
-                </div>
-
-                <Button
-                  onClick={handleNextReel}
-                  disabled={currentReelIndex === reels.length - 1}
-                  size="lg"
-                  className="rounded-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white"
-                >
-                  <ChevronDown size={24} />
-                </Button>
-              </div>
             </div>
+          )
+        })}
+      </div>
 
-            {/* Mobile Progress */}
-            <div className="lg:hidden mt-4 p-4 bg-secondary/10 rounded-xl border border-border w-full overflow-hidden">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium truncate">
-                  {getText("Progression", "التقدم", "Progress")}
-                </span>
-                <span className="text-sm font-bold text-violet-600 truncate">
-                  {watchedReels.length} / {reels.length}
-                </span>
-              </div>
+      {/* Mobile Progress */}
+      <div className="lg:hidden mt-4 p-4 bg-secondary/10 rounded-xl border border-border w-full max-w-lg mx-auto overflow-hidden">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium truncate">
+            {getText("Progression", "التقدم", "Progress")}
+          </span>
+          <span className="text-sm font-bold text-violet-600 truncate">
+            {watchedReels.length} / {reels.length}
+          </span>
+        </div>
 
-              {/* Progress Bar */}
-              <div className="w-full bg-secondary/30 rounded-full h-2 overflow-hidden">
-                <div 
-                  className="bg-gradient-to-r from-violet-500 to-purple-500 h-2 rounded-full transition-all duration-700 ease-in-out"
-                  style={{ width: `${completionRate}%` }}
-                />
-              </div>
-            </div>
-
-          </div>
+        {/* Progress Bar */}
+        <div className="w-full bg-secondary/30 rounded-full h-2 overflow-hidden">
+          <div 
+            className="bg-gradient-to-r from-violet-500 to-purple-500 h-2 rounded-full transition-all duration-700 ease-in-out"
+            style={{ width: `${completionRate}%` }}
+          />
         </div>
       </div>
+    </div>
+  </div>
 
       <style jsx>{`
         @keyframes bounce-slow {
@@ -437,6 +480,9 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
         }
         .animate-bounce-slow {
           animation: bounce-slow 3s ease-in-out infinite;
+        }
+        div::-webkit-scrollbar {
+          display: none;
         }
       `}</style>
     </div>

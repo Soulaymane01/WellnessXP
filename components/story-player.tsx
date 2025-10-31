@@ -374,9 +374,6 @@ export default function StoryPlayer({ story }: StoryPlayerProps) {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 ml-3">
-                        <Badge variant="secondary" className="text-xs">
-                          +{choice.xp} XP
-                        </Badge>
                         <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-purple-600 transition-colors" />
                       </div>
                     </div>

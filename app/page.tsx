@@ -1,5 +1,7 @@
-import Dashboard from "@/components/dashboard"
+// app/page.tsx
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return <Dashboard />
+  // This will immediately redirect to /dashboard
+  redirect("/dashboard");
 }

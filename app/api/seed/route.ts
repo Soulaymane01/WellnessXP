@@ -13,12 +13,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Seed Badges
-    for (const reels of seedReels) {
-      await setDoc(doc(db, 'reels', reels.id), reels)
+    // Seed reels
+    for (const reel of seedReels) {
+      await setDoc(doc(db, 'reels', reel.id), reel)
     }
-    console.log('✅ reels seeded')
-
+    console.log('✅ Reel seeded')
+    /*
     // Seed Badges
     for (const badge of seedBadges) {
       await setDoc(doc(db, 'badges', badge.id), badge)
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       await setDoc(doc(db, 'health_centers', center.id), center)
     }
     console.log('✅ Health Centers seeded')
-
+    */
     return NextResponse.json({
       success: true,
       message: 'Database seeded successfully!',

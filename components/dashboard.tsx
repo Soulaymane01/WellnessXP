@@ -158,7 +158,7 @@ export default function Dashboard({
       page: "centers"
     },{
       title: getText("Récompenses", "المكافآت", "rewards"),
-      subtitle: getText("Obtiens ta récompense aujourd’hui", "احصل على مكافأتك اليوم", "get your reward today"),
+      subtitle: getText("Obtiens ta récompense aujourd'hui", "احصل على مكافأتك اليوم", "get your reward today"),
       icon: Trophy,
       gradient: "from-emerald-400 to-green-500",
       iconBg: "bg-emerald-500",
@@ -195,17 +195,17 @@ export default function Dashboard({
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-900 dark:to-teal-950 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-emerald-50 via-white to-teal-50 dark:from-gray-900 dark:via-gray-900 dark:to-teal-950 p-4 sm:p-6 lg:p-8">
       {/* Top Stats Bar */}
-      <div className="max-w-7xl mx-auto mb-6">
+      <div className="w-full max-w-7xl mx-auto mb-6">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           {/* Level */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border border-emerald-100 dark:border-gray-700 hover:shadow-xl transition-all hover:-translate-y-1">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
                 <Crown className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{getText("Niveau", "المستوى", "Level")}</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400 truncate">{getText("Niveau", "المستوى", "Level")}</span>
             </div>
             <p className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">{progress.level}</p>
             <Progress value={xpProgress} className="h-1.5 mt-2 bg-gray-200 dark:bg-gray-700" />
@@ -214,34 +214,34 @@ export default function Dashboard({
           {/* XP */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border border-emerald-100 dark:border-gray-700 hover:shadow-xl transition-all hover:-translate-y-1">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center flex-shrink-0">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">XP Total</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400 truncate">XP Total</span>
             </div>
             <p className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">{progress.totalXP}</p>
-            <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-medium">+{weeklyXP} {getText("cette semaine", "هذا الأسبوع", "this week")}</p>
+            <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-medium truncate">+{weeklyXP} {getText("cette semaine", "هذا الأسبوع", "this week")}</p>
           </div>
 
           {/* Streak */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border border-emerald-100 dark:border-gray-700 hover:shadow-xl transition-all hover:-translate-y-1">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center flex-shrink-0">
                 <Flame className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{getText("Série", "السلسلة", "Streak")}</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400 truncate">{getText("Série", "السلسلة", "Streak")}</span>
             </div>
             <p className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">{streak}</p>
-            <p className="text-xs text-orange-600 dark:text-orange-400 mt-1 font-medium">{getText("jours", "أيام", "days")}</p>
+            <p className="text-xs text-orange-600 dark:text-orange-400 mt-1 font-medium truncate">{getText("jours", "أيام", "days")}</p>
           </div>
 
           {/* Badges */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border border-emerald-100 dark:border-gray-700 hover:shadow-xl transition-all hover:-translate-y-1">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg flex items-center justify-center flex-shrink-0">
                 <Award className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{getText("Badges", "الشارات", "Badges")}</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400 truncate">{getText("Badges", "الشارات", "Badges")}</span>
             </div>
             <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{progress.badges.length}</p>
             <p className="text-xs text-blue-600 dark:text-blue-400 mt-1 font-medium">/ {allBadges.length}</p>
@@ -249,28 +249,28 @@ export default function Dashboard({
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6 min-w-0">
           {/* Daily Goal */}
           <Card className="border-0 shadow-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32" />
+            
             <CardHeader className="relative">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center flex-shrink-0">
                     <Target className="w-6 h-6 text-white" />
                   </div>
-                  <div>
-                    <CardTitle className="text-white text-xl">
+                  <div className="min-w-0 flex-1">
+                    <CardTitle className="text-white text-xl truncate">
                       {getText("Objectif Quotidien", "الهدف اليومي", "Daily Goal")}
                     </CardTitle>
-                    <CardDescription className="text-white/80">
+                    <CardDescription className="text-white/80 truncate">
                       {dailyGoal.current} / {dailyGoal.target} XP
                     </CardDescription>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-right flex-shrink-0">
                   <p className="text-4xl font-bold text-white">{Math.round((dailyGoal.current / dailyGoal.target) * 100)}%</p>
                 </div>
               </div>
@@ -284,8 +284,8 @@ export default function Dashboard({
               </div>
               {dailyGoal.current >= dailyGoal.target && (
                 <div className="mt-3 flex items-center gap-2 text-white">
-                  <Sparkles className="w-5 h-5" />
-                  <span className="font-semibold">
+                  <Sparkles className="w-5 h-5 flex-shrink-0" />
+                  <span className="font-semibold truncate">
                     {getText("Objectif atteint! 🎉", "تم تحقيق الهدف! 🎉", "Goal achieved! 🎉")}
                   </span>
                 </div>
@@ -297,8 +297,8 @@ export default function Dashboard({
           <Card className="border-0 shadow-xl bg-white dark:bg-gray-800">
             <CardHeader>
               <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
-                <Trophy className="w-6 h-6 text-yellow-500" />
-                {getText("Défis du Jour", "تحديات اليوم", "Daily Challenges")}
+                <Trophy className="w-6 h-6 text-yellow-500 flex-shrink-0" />
+                <span className="truncate">{getText("Défis du Jour", "تحديات اليوم", "Daily Challenges")}</span>
               </CardTitle>
               <CardDescription className="text-gray-600 dark:text-gray-400">
                 {getText("Complete pour gagner des XP bonus", "أكمل لكسب XP إضافية", "Complete to earn bonus XP")}
@@ -339,24 +339,24 @@ export default function Dashboard({
                     }`}
                     onClick={challenge.action}
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                    <div className="flex items-center justify-between mb-3 gap-3">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
                           challenge.completed ? colors.iconBg : 'bg-gray-200 dark:bg-gray-800'
                         }`}>
                           <Icon className={`w-6 h-6 ${challenge.completed ? colors.icon : 'text-gray-400'}`} />
                         </div>
-                        <div>
-                          <p className="font-semibold text-gray-900 dark:text-white">{challenge.title}</p>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-semibold text-gray-900 dark:text-white truncate">{challenge.title}</p>
                           <p className="text-sm text-gray-600 dark:text-gray-400">+{challenge.xp} XP</p>
                         </div>
                       </div>
                       {challenge.completed ? (
-                        <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center shadow-lg">
+                        <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
                           <Star className="w-6 h-6 text-white fill-white" />
                         </div>
                       ) : (
-                        <ChevronRight className="w-6 h-6 text-gray-400" />
+                        <ChevronRight className="w-6 h-6 text-gray-400 flex-shrink-0" />
                       )}
                     </div>
                     <Progress 
@@ -380,11 +380,11 @@ export default function Dashboard({
                   onClick={() => onNavigate?.(action.page)}
                 >
                   <CardContent className="pt-6 relative">
-                    <div className={`w-14 h-14 bg-gradient-to-br ${action.gradient} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg`}>
+                    <div className={`w-14 h-14 bg-gradient-to-br ${action.gradient} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg flex-shrink-0`}>
                       <Icon className="w-7 h-7 text-white" />
                     </div>
-                    <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-1">{action.title}</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">{action.subtitle}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-1 truncate">{action.title}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 font-medium truncate">{action.subtitle}</p>
                   </CardContent>
                 </Card>
               )
@@ -393,7 +393,7 @@ export default function Dashboard({
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-6 min-w-0">
           {/* Level Progress Card */}
           <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-emerald-50 dark:from-gray-800 dark:to-emerald-900/20">
             <CardContent className="pt-6">
@@ -446,8 +446,8 @@ export default function Dashboard({
           <Card className="border-0 shadow-xl bg-white dark:bg-gray-800">
             <CardHeader>
               <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
-                <Medal className="w-6 h-6 text-yellow-500" />
-                {getText("Prochains Objectifs", "الأهداف التالية", "Next Goals")}
+                <Medal className="w-6 h-6 text-yellow-500 flex-shrink-0" />
+                <span className="truncate">{getText("Prochains Objectifs", "الأهداف التالية", "Next Goals")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -485,7 +485,7 @@ export default function Dashboard({
                     }`}
                   >
                     <div className="flex items-center gap-3 mb-2">
-                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${
+                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${
                         achievement.locked ? 'bg-gray-200 dark:bg-gray-800' : colors.iconBg
                       }`}>
                         {achievement.locked ? (
@@ -494,11 +494,11 @@ export default function Dashboard({
                           <Icon className={`w-6 h-6 ${colors.icon}`} />
                         )}
                       </div>
-                      <div className="flex-1">
-                        <p className={`font-semibold text-sm ${achievement.locked ? 'text-gray-600 dark:text-gray-400' : 'text-gray-900 dark:text-white'}`}>
+                      <div className="flex-1 min-w-0">
+                        <p className={`font-semibold text-sm truncate ${achievement.locked ? 'text-gray-600 dark:text-gray-400' : 'text-gray-900 dark:text-white'}`}>
                           {achievement.title}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-500">{achievement.requirement}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500 truncate">{achievement.requirement}</p>
                       </div>
                     </div>
                     <Progress 
@@ -516,8 +516,8 @@ export default function Dashboard({
             <Card className="border-0 shadow-xl bg-white dark:bg-gray-800">
               <CardHeader>
                 <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-teal-500" />
-                  {getText("Activité Récente", "النشاط الأخير", "Recent Activity")}
+                  <TrendingUp className="w-5 h-5 text-teal-500 flex-shrink-0" />
+                  <span className="truncate">{getText("Activité Récente", "النشاط الأخير", "Recent Activity")}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">

@@ -46,7 +46,7 @@ export default function DashboardPage() {
   // Show loading state
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-teal-50">
+      <div className="min-h-screen w-full overflow-x-hidden flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-teal-50">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Chargement...</p>
@@ -56,14 +56,16 @@ export default function DashboardPage() {
   }
 
   return (
-    <Dashboard
-      onNavigate={(page) => router.push(`/${page}`)}
-      progress={progress}
-      settings={settings}
-      activityHistory={activityHistory}
-      recentQuizzes={quizzes.slice(0, 5)} // Get first 5 recent quizzes
-      recentStories={stories.slice(0, 5)} // Get first 5 recent stories
-      allBadges={badges}
-    />
+    <div className="w-full overflow-x-hidden">
+      <Dashboard
+        onNavigate={(page) => router.push(`/${page}`)}
+        progress={progress}
+        settings={settings}
+        activityHistory={activityHistory}
+        recentQuizzes={quizzes.slice(0, 5)} // Get first 5 recent quizzes
+        recentStories={stories.slice(0, 5)} // Get first 5 recent stories
+        allBadges={badges}
+      />
+    </div>
   )
 }

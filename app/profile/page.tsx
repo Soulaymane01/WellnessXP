@@ -160,9 +160,6 @@ export default function EnhancedProfile() {
     }
   })
 
-  
-
-
   const achievements: Achievement[] = [
     {
       id: "quiz-master",
@@ -211,9 +208,9 @@ export default function EnhancedProfile() {
   const getRarityColor = (rarity: string) => {
     switch (rarity) {
       case 'common': return 'from-slate-400 to-slate-500'
-      case 'rare': return 'from-blue-400 to-blue-600'
-      case 'epic': return 'from-purple-400 to-purple-600'
-      case 'legendary': return 'from-amber-400 to-amber-600'
+      case 'rare': return 'from-green-400 to-green-600'
+      case 'epic': return 'from-blue-400 to-blue-600'
+      case 'legendary': return 'from-teal-400 to-teal-600'
       default: return 'from-slate-400 to-slate-500'
     }
   }
@@ -235,17 +232,17 @@ export default function EnhancedProfile() {
   }
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-background via-background to-rose-500/5 transition-all duration-300 `}>
+    <div className={`min-h-screen bg-gradient-to-br from-background via-background to-green-500/5 transition-all duration-300 `}>
       {/* Header */}
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
                 <User className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                   {getText("Mon Profil", "ملفي الشخصي", "My Profile")}
                 </h1>
                 <p className="text-xs text-muted-foreground">
@@ -254,11 +251,11 @@ export default function EnhancedProfile() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge className="bg-rose-500/10 text-rose-600 border-rose-500/20 hidden sm:flex">
+              <Badge className="bg-green-500/10 text-green-600 border-green-500/20 hidden sm:flex">
                 <Trophy className="w-3 h-3 mr-1" />
                 {getText("Niveau", "المستوى", "Level")} {progress.level}
               </Badge>
-              <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 hidden sm:flex">
+              <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20 hidden sm:flex">
                 <Zap className="w-3 h-3 mr-1" />
                 {progress.totalXP} XP
               </Badge>
@@ -272,7 +269,7 @@ export default function EnhancedProfile() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           {/* Main Profile Card */}
           <Card className="border-border/50 lg:col-span-2 overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-500" />
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 via-blue-500 to-teal-500" />
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span>{getText("Profil Utilisateur", "الملف الشخصي", "User Profile")}</span>
@@ -286,10 +283,10 @@ export default function EnhancedProfile() {
             <CardContent>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mb-6 sm:mb-8">
                 <div className="relative">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-rose-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-green-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-xl">
                     <User className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
                   </div>
-                  <div className="absolute -bottom-2 -right-2 bg-amber-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
+                  <div className="absolute -bottom-2 -right-2 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
                     <Zap className="w-3 h-3" />
                     {progress.level}
                   </div>
@@ -314,7 +311,7 @@ export default function EnhancedProfile() {
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-semibold text-foreground flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-amber-500" />
+                    <Sparkles className="w-5 h-5 text-blue-500" />
                     {getText("Niveau", "المستوى", "Level")} {progress.level}
                   </h3>
                   <span className="text-sm text-muted-foreground">
@@ -323,7 +320,7 @@ export default function EnhancedProfile() {
                 </div>
                 <div className="w-full bg-secondary/20 rounded-full h-3 overflow-hidden">
                   <div
-                    className="bg-gradient-to-r from-rose-500 via-pink-500 to-purple-500 h-3 rounded-full transition-all duration-500"
+                    className="bg-gradient-to-r from-green-500 via-blue-500 to-teal-500 h-3 rounded-full transition-all duration-500"
                     style={{ width: `${xpPercentage}%` }}
                   />
                 </div>
@@ -338,26 +335,26 @@ export default function EnhancedProfile() {
 
               {/* Stats Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                <div className="p-3 sm:p-4 bg-gradient-to-br from-blue-500/10 to-blue-600/10 rounded-xl border border-blue-500/20 hover:scale-105 transition-transform">
-                  <p className="text-xl sm:text-2xl font-bold text-blue-600">{progress.quizzesCompleted}</p>
+                <div className="p-3 sm:p-4 bg-gradient-to-br from-green-500/10 to-green-600/10 rounded-xl border border-green-500/20 hover:scale-105 transition-transform">
+                  <p className="text-xl sm:text-2xl font-bold text-green-600">{progress.quizzesCompleted}</p>
                   <p className="text-xs text-muted-foreground mt-1">
                     {getText("Quiz", "اختبارات", "Quizzes")}
                   </p>
                 </div>
-                <div className="p-3 sm:p-4 bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-xl border border-purple-500/20 hover:scale-105 transition-transform">
-                  <p className="text-xl sm:text-2xl font-bold text-purple-600">{progress.storiesRead}</p>
+                <div className="p-3 sm:p-4 bg-gradient-to-br from-blue-500/10 to-blue-600/10 rounded-xl border border-blue-500/20 hover:scale-105 transition-transform">
+                  <p className="text-xl sm:text-2xl font-bold text-blue-600">{progress.storiesRead}</p>
                   <p className="text-xs text-muted-foreground mt-1">
                     {getText("Histoires", "قصص", "Stories")}
                   </p>
                 </div>
-                <div className="p-3 sm:p-4 bg-gradient-to-br from-pink-500/10 to-pink-600/10 rounded-xl border border-pink-500/20 hover:scale-105 transition-transform">
-                  <p className="text-xl sm:text-2xl font-bold text-pink-600">{progress.reelsWatched}</p>
+                <div className="p-3 sm:p-4 bg-gradient-to-br from-teal-500/10 to-teal-600/10 rounded-xl border border-teal-500/20 hover:scale-105 transition-transform">
+                  <p className="text-xl sm:text-2xl font-bold text-teal-600">{progress.reelsWatched}</p>
                   <p className="text-xs text-muted-foreground mt-1">
                     {getText("Reels", "ريلز", "Reels")}
                   </p>
                 </div>
-                <div className="p-3 sm:p-4 bg-gradient-to-br from-amber-500/10 to-amber-600/10 rounded-xl border border-amber-500/20 hover:scale-105 transition-transform">
-                  <p className="text-xl sm:text-2xl font-bold text-amber-600">
+                <div className="p-3 sm:p-4 bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 rounded-xl border border-emerald-500/20 hover:scale-105 transition-transform">
+                  <p className="text-xl sm:text-2xl font-bold text-emerald-600">
                     {updatedBadges.filter(b => b.unlocked).length}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
@@ -370,28 +367,28 @@ export default function EnhancedProfile() {
 
           {/* Stats Summary */}
           <Card className="border-border/50 overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-yellow-500" />
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-blue-500" />
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-amber-500" />
+                <Trophy className="w-5 h-5 text-blue-500" />
                 {getText("Statistiques", "الإحصائيات", "Statistics")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="p-4 bg-gradient-to-br from-rose-500/10 to-pink-500/10 rounded-xl border border-rose-500/20">
+              <div className="p-4 bg-gradient-to-br from-green-500/10 to-blue-500/10 rounded-xl border border-green-500/20">
                 <p className="text-sm text-muted-foreground mb-1">
                   {getText("XP Total", "إجمالي النقاط", "Total XP")}
                 </p>
-                <p className="text-3xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                <p className="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                   {progress.totalXP}
                 </p>
               </div>
               
-              <div className="p-4 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-xl border border-blue-500/20">
+              <div className="p-4 bg-gradient-to-br from-teal-500/10 to-cyan-500/10 rounded-xl border border-teal-500/20">
                 <p className="text-sm text-muted-foreground mb-1">
                   {getText("Badges Débloqués", "الشارات المفتوحة", "Unlocked Badges")}
                 </p>
-                <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                <p className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
                   {updatedBadges.filter(b => b.unlocked).length}/{updatedBadges.length}
                 </p>
               </div>
@@ -404,14 +401,14 @@ export default function EnhancedProfile() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-xs p-2 bg-secondary/10 rounded-lg">
                     <span className="text-foreground flex items-center gap-2">
-                      <Sparkles className="w-3 h-3 text-amber-500" />
+                      <Sparkles className="w-3 h-3 text-blue-500" />
                       {getText("Niveau", "المستوى", "Level")} {progress.level + 1}
                     </span>
                     <span className="text-muted-foreground font-medium">{xpToNextLevel} XP</span>
                   </div>
                   <div className="flex items-center justify-between text-xs p-2 bg-secondary/10 rounded-lg">
                     <span className="text-foreground flex items-center gap-2">
-                      <Award className="w-3 h-3 text-blue-500" />
+                      <Award className="w-3 h-3 text-green-500" />
                       Reel Watcher
                     </span>
                     <span className="text-muted-foreground font-medium">
@@ -500,14 +497,14 @@ export default function EnhancedProfile() {
                           className={`h-2 rounded-full transition-all duration-500 ${
                             isComplete 
                               ? 'bg-gradient-to-r from-green-500 to-emerald-500' 
-                              : 'bg-gradient-to-r from-primary to-secondary'
+                              : 'bg-gradient-to-r from-green-500 to-blue-500'
                           }`}
                           style={{ width: `${Math.min(progressPercent, 100)}%` }}
                         />
                       </div>
                       <div className="flex items-center justify-between">
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Zap className="w-3 h-3 text-amber-500" />
+                          <Zap className="w-3 h-3 text-blue-500" />
                           +{achievement.reward} XP
                         </p>
                         {isComplete && (
@@ -540,28 +537,28 @@ export default function EnhancedProfile() {
                     detail: getText("Santé Menstruelle", "الصحة الدورية", "Menstrual Health"),
                     date: getText("Aujourd'hui", "اليوم", "Today"),
                     icon: "🎯",
-                    color: "text-blue-600"
+                    color: "text-green-600"
                   },
                   { 
                     action: getText("Histoire lue", "قصة مقروءة", "Story read"),
                     detail: getText("Consentement et Respect", "الموافقة والاحترام", "Consent and Respect"),
                     date: getText("Hier", "أمس", "Yesterday"),
                     icon: "📖",
-                    color: "text-purple-600"
+                    color: "text-blue-600"
                   },
                   { 
                     action: getText("Badge débloqué", "شارة مفتوحة", "Badge unlocked"),
                     detail: getText("Curieux", "فضولي", "Curious"),
                     date: getText("Il y a 3 jours", "منذ 3 أيام", "3 days ago"),
                     icon: "🏆",
-                    color: "text-amber-600"
+                    color: "text-teal-600"
                   },
                   { 
                     action: getText("Reel regardé", "ريل تمت مشاهدته", "Reel watched"),
                     detail: getText("Contraception Moderne", "وسائل منع الحمل الحديثة", "Modern Contraception"),
                     date: getText("Il y a 5 jours", "منذ 5 أيام", "5 days ago"),
                     icon: "🎬",
-                    color: "text-pink-600"
+                    color: "text-emerald-600"
                   },
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-start gap-3 p-3 rounded-lg hover:bg-secondary/10 transition-colors border border-border/50">
@@ -609,9 +606,9 @@ export default function EnhancedProfile() {
                     <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{badgeDescription}</p>
                     
                     <Badge className={`text-xs ${
-                      badge.rarity === 'legendary' ? 'bg-amber-500/20 text-amber-600 border-amber-500/30' :
-                      badge.rarity === 'epic' ? 'bg-purple-500/20 text-purple-600 border-purple-500/30' :
-                      badge.rarity === 'rare' ? 'bg-blue-500/20 text-blue-600 border-blue-500/30' :
+                      badge.rarity === 'legendary' ? 'bg-teal-500/20 text-teal-600 border-teal-500/30' :
+                      badge.rarity === 'epic' ? 'bg-blue-500/20 text-blue-600 border-blue-500/30' :
+                      badge.rarity === 'rare' ? 'bg-green-500/20 text-green-600 border-green-500/30' :
                       'bg-slate-500/20 text-slate-600 border-slate-500/30'
                     }`}>
                       {getText(
@@ -686,12 +683,12 @@ export default function EnhancedProfile() {
                 >
                   {settings.theme === "dark" ? (
                     <>
-                      <Sun className="w-4 h-4 text-amber-500" />{" "}
+                      <Sun className="w-4 h-4 text-blue-500" />{" "}
                       {getText("Mode Clair", "الوضع الفاتح", "Light Mode")}
                     </>
                   ) : (
                     <>
-                      <Moon className="w-4 h-4 text-blue-500" />{" "}
+                      <Moon className="w-4 h-4 text-green-500" />{" "}
                       {getText("Mode Sombre", "الوضع الداكن", "Dark Mode")}
                     </>
                   )}

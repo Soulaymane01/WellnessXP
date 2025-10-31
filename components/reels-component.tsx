@@ -334,7 +334,7 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
 
                 {/* Watched Indicator */}
                 {watchedReels.includes(currentReel.id) && (
-                  <div className="absolute top-16 left-4 bg-green-500 text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
+                  <div className="absolute top-18 left-4 bg-green-500 text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
                     <span>✓</span>
                     {getText("Regardé", "مشاهدة", "Watched")}
                   </div>

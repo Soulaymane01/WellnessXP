@@ -39,6 +39,7 @@ export default function RewardsPage() {
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
   const [showFilters, setShowFilters] = useState(false)
   const [activeCategory, setActiveCategory] = useState<string>('all')
+  const [isMobile, setIsMobile] = useState(false)
   
   // Mentor application form
   const [mentorForm, setMentorForm] = useState({
@@ -53,6 +54,17 @@ export default function RewardsPage() {
     if (settings.language === 'en') return en
     return fr
   }
+
+  // Détection du mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Maintenant les catégories peuvent utiliser getText
   const categories = [
@@ -221,100 +233,100 @@ export default function RewardsPage() {
 
   return (
     <div className={`min-h-screen bg-gradient-to-br from-background via-background to-emerald-500/5 transition-all duration-300`}>
-      {/* Header Mobile Optimized */}
+      {/* Header Responsive */}
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-20">
-        <div className="px-4 py-4">
+        <div className="px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
                 <Gift className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                   {getText("Récompenses", "المكافآت", "Rewards")}
                 </h1>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   {getText("Échangez vos XP", "استبدل نقاط الخبرة", "Exchange your XP")}
                 </p>
               </div>
             </div>
             
-            {/* Mobile Stats */}
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1 px-2 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20">
-                <Trophy className="w-3 h-3 text-emerald-600" />
-                <span className="text-xs font-medium">{progress.level}</span>
+            {/* Stats - Différents affichages mobile/desktop */}
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="flex items-center gap-1 px-2 sm:px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20">
+                <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-600" />
+                <span className="text-xs sm:text-sm font-medium">{progress.level}</span>
               </div>
-              <div className="flex items-center gap-1 px-2 py-1 bg-teal-500/10 rounded-full border border-teal-500/20">
-                <Star className="w-3 h-3 text-teal-600" />
-                <span className="text-xs font-medium">{progress.totalXP}</span>
+              <div className="flex items-center gap-1 px-2 sm:px-3 py-1 bg-teal-500/10 rounded-full border border-teal-500/20">
+                <Star className="w-3 h-3 sm:w-4 sm:h-4 text-teal-600" />
+                <span className="text-xs sm:text-sm font-medium">{progress.totalXP}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="px-4 py-4">
-        {/* Stats Cards - Mobile Grid */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
+      <div className="px-4 sm:px-6 py-4 sm:py-6">
+        {/* Stats Cards - Responsive Grid */}
+        <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-3 sm:gap-4 mb-6`}>
           <Card className="border-border/50 bg-gradient-to-br from-emerald-500/5 to-transparent">
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">
                     {getText('Disponibles', 'متاح', 'Available')}
                   </p>
-                  <p className="text-xl font-bold text-emerald-600">{allRewards.length}</p>
+                  <p className="text-lg sm:text-xl font-bold text-emerald-600">{allRewards.length}</p>
                 </div>
-                <Gift className="w-6 h-6 text-emerald-500/20" />
+                <Gift className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500/20" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-border/50 bg-gradient-to-br from-teal-500/5 to-transparent">
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">
                     {getText('Réclamées', 'مطالب بها', 'Claimed')}
                   </p>
-                  <p className="text-xl font-bold text-teal-600">{stats?.totalClaimed || 0}</p>
+                  <p className="text-lg sm:text-xl font-bold text-teal-600">{stats?.totalClaimed || 0}</p>
                 </div>
-                <CheckCircle2 className="w-6 h-6 text-teal-500/20" />
+                <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-teal-500/20" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-border/50 bg-gradient-to-br from-cyan-500/5 to-transparent">
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">
                     {getText('Actives', 'نشط', 'Active')}
                   </p>
-                  <p className="text-xl font-bold text-cyan-600">{stats?.totalActive || 0}</p>
+                  <p className="text-lg sm:text-xl font-bold text-cyan-600">{stats?.totalActive || 0}</p>
                 </div>
-                <Sparkles className="w-6 h-6 text-cyan-500/20" />
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-500/20" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-border/50 bg-gradient-to-br from-green-500/5 to-transparent">
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">
                     {getText('Utilisées', 'مستخدم', 'Used')}
                   </p>
-                  <p className="text-xl font-bold text-green-600">{stats?.totalUsed || 0}</p>
+                  <p className="text-lg sm:text-xl font-bold text-green-600">{stats?.totalUsed || 0}</p>
                 </div>
-                <TrendingUp className="w-6 h-6 text-green-500/20" />
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-green-500/20" />
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Tabs - Mobile Scrollable */}
+        {/* Tabs - Responsive */}
         <div className="flex gap-1 mb-6 border-b border-border overflow-x-auto scrollbar-hide">
           {[
             { id: 'available', label: getText('Disponibles', 'متاح', 'Available'), icon: Gift, shortLabel: getText('Dispo', 'متاح', 'Avail') },
@@ -326,7 +338,7 @@ export default function RewardsPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as TabType)}
-                className={`flex items-center gap-2 px-4 py-3 font-medium transition-all flex-shrink-0 min-w-max ${
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3 font-medium transition-all flex-shrink-0 min-w-max ${
                   activeTab === tab.id
                     ? 'text-emerald-600 border-b-2 border-emerald-600'
                     : 'text-muted-foreground hover:text-foreground'
@@ -347,7 +359,7 @@ export default function RewardsPage() {
             {featuredRewards.length > 0 && (
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold flex items-center gap-2">
+                  <h2 className="text-lg sm:text-xl font-bold flex items-center gap-2">
                     <Zap className="w-5 h-5 text-yellow-500" />
                     {getText('Récompenses en Vedette', 'المكافآت المميزة', 'Featured Rewards')}
                   </h2>
@@ -355,8 +367,8 @@ export default function RewardsPage() {
                     {getText('Populaire', 'شائع', 'Popular')}
                   </Badge>
                 </div>
-                <div className="grid grid-cols-1 gap-4">
-                  {featuredRewards.slice(0, 2).map(reward => (
+                <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-4`}>
+                  {featuredRewards.slice(0, isMobile ? 1 : 2).map(reward => (
                     <FeaturedRewardCard 
                       key={reward.id}
                       reward={reward}
@@ -366,6 +378,7 @@ export default function RewardsPage() {
                       getRewardTitle={getRewardTitle}
                       getRewardDesc={getRewardDesc}
                       progress={progress}
+                      isMobile={isMobile}
                     />
                   ))}
                 </div>
@@ -400,7 +413,7 @@ export default function RewardsPage() {
               </div>
             </div>
 
-            {/* Mobile Filters */}
+            {/* Search and Filters - Responsive */}
             <div className="mb-4 space-y-3">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -414,27 +427,45 @@ export default function RewardsPage() {
               </div>
               
               <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="flex items-center gap-2"
-                >
-                  <Filter className="w-4 h-4" />
-                  <span>{getText('Filtrer', 'تصفية', 'Filter')}</span>
-                </Button>
-                
-                {showFilters && (
-                  <select
-                    value={filterType}
-                    onChange={(e) => setFilterType(e.target.value)}
-                    className="flex-1 px-3 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
-                  >
-                    <option value="all">{getText('Tous types', 'كل الأنواع', 'All types')}</option>
-                    <option value="coupon">{getText('Coupons', 'كوبونات', 'Coupons')}</option>
-                    <option value="activity">{getText('Activités', 'أنشطة', 'Activities')}</option>
-                    <option value="mentor">{getText('Mentor', 'مرشد', 'Mentor')}</option>
-                  </select>
+                {isMobile ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="flex items-center gap-2"
+                    >
+                      <Filter className="w-4 h-4" />
+                      <span>{getText('Filtrer', 'تصفية', 'Filter')}</span>
+                    </Button>
+                    
+                    {showFilters && (
+                      <select
+                        value={filterType}
+                        onChange={(e) => setFilterType(e.target.value)}
+                        className="flex-1 px-3 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                      >
+                        <option value="all">{getText('Tous types', 'كل الأنواع', 'All types')}</option>
+                        <option value="coupon">{getText('Coupons', 'كوبونات', 'Coupons')}</option>
+                        <option value="activity">{getText('Activités', 'أنشطة', 'Activities')}</option>
+                        <option value="mentor">{getText('Mentor', 'مرشد', 'Mentor')}</option>
+                      </select>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">{getText('Type:', 'النوع:', 'Type:')}</span>
+                    <select
+                      value={filterType}
+                      onChange={(e) => setFilterType(e.target.value)}
+                      className="px-3 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                    >
+                      <option value="all">{getText('Tous types', 'كل الأنواع', 'All types')}</option>
+                      <option value="coupon">{getText('Coupons', 'كوبونات', 'Coupons')}</option>
+                      <option value="activity">{getText('Activités', 'أنشطة', 'Activities')}</option>
+                      <option value="mentor">{getText('Mentor', 'مرشد', 'Mentor')}</option>
+                    </select>
+                  </div>
                 )}
               </div>
             </div>
@@ -454,8 +485,8 @@ export default function RewardsPage() {
               </div>
             </div>
 
-            {/* Rewards Grid */}
-            <div className="grid grid-cols-1 gap-4">
+            {/* Rewards Grid - Responsive */}
+            <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2 lg:grid-cols-3'} gap-4`}>
               {filteredRewards.map(reward => {
                 const canClaim = progress.level >= reward.requiredLevel
                 const hasRequiredBadges = !reward.requiredBadges || 
@@ -475,6 +506,7 @@ export default function RewardsPage() {
                     getTypeColor={getTypeColor}
                     getTypeIcon={getTypeIcon}
                     progress={progress}
+                    isMobile={isMobile}
                   />
                 )
               })}
@@ -531,12 +563,11 @@ export default function RewardsPage() {
           </div>
         )}
 
-        {/* Rest of the code remains the same for other tabs */}
         {/* My Rewards Tab */}
         {activeTab === 'my-rewards' && (
           <div>
             {myRewards.length > 0 ? (
-              <div className="grid grid-cols-1 gap-4">
+              <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2 lg:grid-cols-3'} gap-4`}>
                 {myRewards.map(userReward => (
                   <Card key={userReward.id} className="border-border/50 overflow-hidden">
                     <div className={`h-20 bg-gradient-to-br ${getTypeColor(userReward.reward.type)} relative`}>
@@ -797,8 +828,8 @@ export default function RewardsPage() {
   )
 }
 
-// Composants auxiliaires restent identiques...
-function FeaturedRewardCard({ reward, onClaim, claimingId, getText, getRewardTitle, getRewardDesc, progress }: any) {
+// Composants auxiliaires adaptés pour le responsive
+function FeaturedRewardCard({ reward, onClaim, claimingId, getText, getRewardTitle, getRewardDesc, progress, isMobile }: any) {
   const canClaim = progress.level >= reward.requiredLevel
   const hasRequiredBadges = !reward.requiredBadges || 
     reward.requiredBadges.every((badge: string) => progress.badges.includes(badge))
@@ -806,13 +837,13 @@ function FeaturedRewardCard({ reward, onClaim, claimingId, getText, getRewardTit
 
   return (
     <Card className="border-2 border-yellow-300/50 bg-gradient-to-br from-yellow-500/5 to-orange-500/5 overflow-hidden">
-      <div className="h-28 bg-gradient-to-br from-yellow-400 to-orange-500 relative overflow-hidden">
+      <div className={`${isMobile ? 'h-24' : 'h-32'} bg-gradient-to-br from-yellow-400 to-orange-500 relative overflow-hidden`}>
         <div className="absolute inset-0 bg-black/10" />
         <div className="absolute inset-0 flex items-center justify-center text-6xl">
           {reward.icon}
         </div>
         <div className="absolute top-3 left-3">
-          <Badge className="bg-white/90 text-yellow-900 font-bold">
+          <Badge className="bg-white/90 text-yellow-900 font-bold text-xs">
             {getText('Vedette', 'مميز', 'Featured')}
           </Badge>
         </div>
@@ -825,11 +856,11 @@ function FeaturedRewardCard({ reward, onClaim, claimingId, getText, getRewardTit
       
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-2">
-          <h3 className="font-bold text-lg text-yellow-900">{getRewardTitle(reward)}</h3>
+          <h3 className={`font-bold ${isMobile ? 'text-base' : 'text-lg'} text-yellow-900`}>{getRewardTitle(reward)}</h3>
           <Crown className="w-5 h-5 text-yellow-600" />
         </div>
         
-        <p className="text-sm text-yellow-800/80 mb-4">{getRewardDesc(reward)}</p>
+        <p className={`text-${isMobile ? 'xs' : 'sm'} text-yellow-800/80 mb-4`}>{getRewardDesc(reward)}</p>
         
         <div className="flex items-center justify-between pt-3 border-t border-yellow-300/50">
           <div className="flex items-center gap-1 text-sm text-yellow-800">
@@ -868,10 +899,10 @@ function FeaturedRewardCard({ reward, onClaim, claimingId, getText, getRewardTit
   )
 }
 
-function RewardCard({ reward, isAvailable, claimingId, onClaim, getText, getRewardTitle, getRewardDesc, getTypeColor, getTypeIcon, progress }: any) {
+function RewardCard({ reward, isAvailable, claimingId, onClaim, getText, getRewardTitle, getRewardDesc, getTypeColor, getTypeIcon, progress, isMobile }: any) {
   return (
     <Card className={`border-border/50 overflow-hidden hover:shadow-lg transition-all ${!isAvailable ? 'opacity-60' : ''}`}>
-      <div className={`h-24 bg-gradient-to-br ${getTypeColor(reward.type)} relative overflow-hidden`}>
+      <div className={`${isMobile ? 'h-20' : 'h-24'} bg-gradient-to-br ${getTypeColor(reward.type)} relative overflow-hidden`}>
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute inset-0 flex items-center justify-center text-5xl">
           {reward.icon}
@@ -890,13 +921,13 @@ function RewardCard({ reward, isAvailable, claimingId, onClaim, getText, getRewa
       
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-2">
-          <h3 className="font-bold text-base leading-tight">{getRewardTitle(reward)}</h3>
+          <h3 className={`font-bold ${isMobile ? 'text-sm' : 'text-base'} leading-tight`}>{getRewardTitle(reward)}</h3>
           <div className="flex items-center gap-1 text-emerald-600 font-bold">
             {getTypeIcon(reward.type)}
           </div>
         </div>
         
-        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{getRewardDesc(reward)}</p>
+        <p className={`text-${isMobile ? 'xs' : 'sm'} text-muted-foreground mb-3 line-clamp-2`}>{getRewardDesc(reward)}</p>
         
         {/* Reward Details - Compact */}
         <div className="space-y-1 mb-3">

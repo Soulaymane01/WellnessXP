@@ -160,6 +160,9 @@ export default function EnhancedProfile() {
     }
   })
 
+  
+
+
   const achievements: Achievement[] = [
     {
       id: "quiz-master",

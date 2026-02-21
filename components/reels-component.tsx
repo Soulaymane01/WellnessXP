@@ -4,29 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { Volume2, VolumeX, Sparkles, Award, Film, CheckCircle2, Trophy, Brain } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useUser } from "@/lib/user-context"
-
-interface Reel {
-  id: string
-  title: string
-  titleAr: string
-  titleEn: string
-  description: string
-  descriptionAr: string
-  descriptionEn: string
-  topic: string
-  topicAr: string
-  topicEn: string
-  duration: number
-  views: number
-  likes: number
-  liked: boolean
-  points: number
-  videoColor: string
-  icon: string
-  category: string
-  difficulty: string
-  educational: boolean
-}
+import { Reel } from "@/lib/types"
 
 interface ReelsProps {
   reels: Reel[]
@@ -34,18 +12,18 @@ interface ReelsProps {
 
 export default function Reels({ reels: initialReels }: ReelsProps) {
   const { addReels, progress, isPending, settings, userId } = useUser()
-  
+
   const [currentReelIndex, setCurrentReelIndex] = useState(0)
   const [reels, setReels] = useState(initialReels)
   const [isMuted, setIsMuted] = useState(!settings.soundEnabled)
   const [watchedReels, setWatchedReels] = useState<string[]>([])
-  const [xpNotification, setXpNotification] = useState<{ points: number; show: boolean }>({ 
-    points: 0, 
-    show: false 
+  const [xpNotification, setXpNotification] = useState<{ points: number; show: boolean }>({
+    points: 0,
+    show: false
   })
   const [reelProgress, setReelProgress] = useState(0)
   const [isScrolling, setIsScrolling] = useState(false)
-  
+
   const containerRef = useRef<HTMLDivElement>(null)
   const touchStartRef = useRef(0)
   const scrollTimeoutRef = useRef<NodeJS.Timeout>()
@@ -55,7 +33,7 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
   // Load watched reels from storage
   useEffect(() => {
     if (!userId) return
-    
+
     const saved = localStorage.getItem(`reelsProgress_${userId}`)
     if (saved) {
       try {
@@ -101,9 +79,9 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
   // Handle scroll snap
   const handleScroll = () => {
     if (!containerRef.current) return
-    
+
     setIsScrolling(true)
-    
+
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current)
     }
@@ -115,14 +93,14 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
       const scrollPosition = container.scrollTop
       const itemHeight = container.clientHeight
       const newIndex = Math.round(scrollPosition / itemHeight)
-      
+
       if (newIndex !== currentReelIndex && newIndex >= 0 && newIndex < reels.length) {
         if (newIndex > currentReelIndex) {
           markReelAsWatched(reels[currentReelIndex].id)
         }
         setCurrentReelIndex(newIndex)
       }
-      
+
       setIsScrolling(false)
     }, 150)
   }
@@ -193,7 +171,7 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
         return prev + (100 / (currentReel.duration * 10))
       })
     }, 100)
-    
+
     return () => clearInterval(interval)
   }, [currentReelIndex, currentReel?.duration])
 
@@ -283,7 +261,7 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
             {reels.map((reel, index) => {
               const isWatched = watchedReels.includes(reel.id)
               const isCurrent = index === currentReelIndex
-              
+
               return (
                 <button
                   key={reel.id}
@@ -297,11 +275,10 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
                     }
                   }}
                   disabled={isPending}
-                  className={`w-full p-3 rounded-xl transition-all text-left relative overflow-hidden ${
-                    isCurrent
+                  className={`w-full p-3 rounded-xl transition-all text-left relative overflow-hidden ${isCurrent
                       ? "bg-gradient-to-r from-violet-500/20 to-purple-500/20 border-2 border-violet-500"
                       : "bg-card/50 hover:bg-secondary/20 border-2 border-transparent"
-                  } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
+                    } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                   <div className="flex items-start gap-3">
                     <div className={`text-2xl flex-shrink-0 ${isCurrent ? 'animate-pulse' : ''}`}>
@@ -353,127 +330,127 @@ export default function Reels({ reels: initialReels }: ReelsProps) {
                   <div
                     className={`w-full h-full bg-gradient-to-br ${reel.videoColor} rounded-3xl flex flex-col items-center justify-center relative overflow-hidden shadow-2xl`}
                   >
-                {/* Progress Bar */}
-                {isCurrent && (
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-white/20 z-20 rounded-t-3xl overflow-hidden">
-                    <div 
-                      className="h-full bg-white transition-all duration-100"
-                      style={{ width: `${reelProgress}%` }}
-                    />
-                  </div>
-                )}
+                    {/* Progress Bar */}
+                    {isCurrent && (
+                      <div className="absolute top-0 left-0 right-0 h-1 bg-white/20 z-20 rounded-t-3xl overflow-hidden">
+                        <div
+                          className="h-full bg-white transition-all duration-100"
+                          style={{ width: `${reelProgress}%` }}
+                        />
+                      </div>
+                    )}
 
-                {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-10">
-                  <div className="absolute inset-0" style={{ 
-                    backgroundImage: 'radial-gradient(circle at 20px 20px, white 2px, transparent 0)',
-                    backgroundSize: '40px 40px'
-                  }} />
-                </div>
-
-                {/* Content */}
-                <div className="relative z-10 text-center px-6 max-w-2xl">
-                  <div className="text-7xl mb-6 animate-bounce-slow">{reel.icon}</div>
-                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                    {reelTitle}
-                  </h2>
-                  <p className="text-white/90 text-sm md:text-base leading-relaxed">
-                    {reelDescription}
-                  </p>
-                </div>
-
-                {/* Top Badges */}
-                <div className="absolute top-4 left-4 flex flex-col gap-2">
-                  <Badge className="bg-black/50 text-white backdrop-blur-sm border-white/20">
-                    {reelTopic}
-                  </Badge>
-                  {reel.educational && (
-                    <Badge className="bg-yellow-500/80 text-white backdrop-blur-sm border-yellow-400/50">
-                      <Sparkles className="w-3 h-3 mr-1" />
-                      {getText("Éducatif", "تعليمي", "Educational")}
-                    </Badge>
-                  )}
-                </div>
-
-                <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm">
-                  {reel.duration}s
-                </div>
-
-                {/* Watched Indicator */}
-                {isWatched && (
-                  <div className="absolute top-20 left-4 bg-green-500 text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
-                    <CheckCircle2 className="w-4 h-4" />
-                    {getText("Regardé", "مشاهدة", "Watched")}
-                  </div>
-                )}
-
-                {/* Bottom Controls */}
-                <button
-                  onClick={() => setIsMuted(!isMuted)}
-                  className="absolute bottom-4 left-4 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all backdrop-blur-sm"
-                >
-                  {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-                </button>
-
-                <div className="absolute bottom-4 right-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white px-4 py-2 rounded-full font-bold text-lg shadow-lg flex items-center gap-2">
-                  <Award className="w-5 h-5" />
-                  +{reel.points} XP
-                </div>
-
-                {/* Progress Indicator */}
-                <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-sm">
-                  {index + 1} / {reels.length}
-                </div>
-
-                {/* XP Notification */}
-                {isCurrent && xpNotification.show && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
-                    <div className="bg-gradient-to-r from-violet-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold text-2xl animate-bounce shadow-2xl flex items-center gap-3">
-                      <Sparkles className="w-6 h-6" />
-                      +{xpNotification.points} XP!
-                      <Sparkles className="w-6 h-6" />
+                    {/* Background Pattern */}
+                    <div className="absolute inset-0 opacity-10">
+                      <div className="absolute inset-0" style={{
+                        backgroundImage: 'radial-gradient(circle at 20px 20px, white 2px, transparent 0)',
+                        backgroundSize: '40px 40px'
+                      }} />
                     </div>
-                  </div>
-                )}
 
-                {/* Loading Overlay */}
-                {isPending && isCurrent && (
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-sm z-20 rounded-3xl">
-                    <div className="bg-white text-gray-900 px-6 py-3 rounded-xl font-semibold flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
-                      {getText("Enregistrement...", "جاري الحفظ...", "Saving...")}
+                    {/* Content */}
+                    <div className="relative z-10 text-center px-6 max-w-2xl">
+                      <div className="text-7xl mb-6 animate-bounce-slow">{reel.icon}</div>
+                      <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                        {reelTitle}
+                      </h2>
+                      <p className="text-white/90 text-sm md:text-base leading-relaxed">
+                        {reelDescription}
+                      </p>
                     </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )
-        })}
-      </div>
 
-      {/* Mobile Progress - Below the reels container */}
-      <div className="lg:hidden w-full max-w-lg mx-auto px-4 pb-4">
-        <div className="p-4 bg-secondary/10 rounded-xl border border-border overflow-hidden">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium truncate">
-              {getText("Progression", "التقدم", "Progress")}
-            </span>
-            <span className="text-sm font-bold text-violet-600 truncate">
-              {watchedReels.length} / {reels.length}
-            </span>
+                    {/* Top Badges */}
+                    <div className="absolute top-4 left-4 flex flex-col gap-2">
+                      <Badge className="bg-black/50 text-white backdrop-blur-sm border-white/20">
+                        {reelTopic}
+                      </Badge>
+                      {reel.educational && (
+                        <Badge className="bg-yellow-500/80 text-white backdrop-blur-sm border-yellow-400/50">
+                          <Sparkles className="w-3 h-3 mr-1" />
+                          {getText("Éducatif", "تعليمي", "Educational")}
+                        </Badge>
+                      )}
+                    </div>
+
+                    <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm">
+                      {reel.duration}s
+                    </div>
+
+                    {/* Watched Indicator */}
+                    {isWatched && (
+                      <div className="absolute top-20 left-4 bg-green-500 text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
+                        <CheckCircle2 className="w-4 h-4" />
+                        {getText("Regardé", "مشاهدة", "Watched")}
+                      </div>
+                    )}
+
+                    {/* Bottom Controls */}
+                    <button
+                      onClick={() => setIsMuted(!isMuted)}
+                      className="absolute bottom-4 left-4 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all backdrop-blur-sm"
+                    >
+                      {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                    </button>
+
+                    <div className="absolute bottom-4 right-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white px-4 py-2 rounded-full font-bold text-lg shadow-lg flex items-center gap-2">
+                      <Award className="w-5 h-5" />
+                      +{reel.points} XP
+                    </div>
+
+                    {/* Progress Indicator */}
+                    <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-sm">
+                      {index + 1} / {reels.length}
+                    </div>
+
+                    {/* XP Notification */}
+                    {isCurrent && xpNotification.show && (
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
+                        <div className="bg-gradient-to-r from-violet-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold text-2xl animate-bounce shadow-2xl flex items-center gap-3">
+                          <Sparkles className="w-6 h-6" />
+                          +{xpNotification.points} XP!
+                          <Sparkles className="w-6 h-6" />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Loading Overlay */}
+                    {isPending && isCurrent && (
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-sm z-20 rounded-3xl">
+                        <div className="bg-white text-gray-900 px-6 py-3 rounded-xl font-semibold flex items-center gap-2">
+                          <div className="w-4 h-4 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
+                          {getText("Enregistrement...", "جاري الحفظ...", "Saving...")}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
           </div>
 
-          {/* Progress Bar */}
-          <div className="w-full bg-secondary/30 rounded-full h-2 overflow-hidden">
-            <div 
-              className="bg-gradient-to-r from-violet-500 to-purple-500 h-2 rounded-full transition-all duration-700 ease-in-out"
-              style={{ width: `${completionRate}%` }}
-            />
+          {/* Mobile Progress - Below the reels container */}
+          <div className="lg:hidden w-full max-w-lg mx-auto px-4 pb-4">
+            <div className="p-4 bg-secondary/10 rounded-xl border border-border overflow-hidden">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium truncate">
+                  {getText("Progression", "التقدم", "Progress")}
+                </span>
+                <span className="text-sm font-bold text-violet-600 truncate">
+                  {watchedReels.length} / {reels.length}
+                </span>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="w-full bg-secondary/30 rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-violet-500 to-purple-500 h-2 rounded-full transition-all duration-700 ease-in-out"
+                  style={{ width: `${completionRate}%` }}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
       <style jsx>{`
         @keyframes bounce-slow {

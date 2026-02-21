@@ -10,30 +10,7 @@ import { useUser } from "@/lib/user-context"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 
-interface Chapter {
-  id: number
-  content: string
-  contentAr: string
-  contentEn: string
-  choices: any[]
-}
-
-interface Story {
-  id: string
-  title: string
-  titleAr: string
-  titleEn: string
-  description: string
-  descriptionAr: string
-  descriptionEn: string
-  category: string
-  coverImage: string
-  difficulty: string
-  xpReward: number
-  estimatedTime: number
-  chapters: Chapter[]
-  createdAt: string
-}
+import { Story, Chapter } from "@/lib/types"
 
 interface StoriesProps {
   stories: Story[]
@@ -79,7 +56,7 @@ export default function Stories({ stories }: StoriesProps) {
   // Filter stories
   const filteredStories = stories.filter(story => {
     const matchesCategory = categoryFilter === "all" || story.category === categoryFilter
-    const matchesSearch = searchQuery === "" || 
+    const matchesSearch = searchQuery === "" ||
       getTitle(story).toLowerCase().includes(searchQuery.toLowerCase()) ||
       getDescription(story).toLowerCase().includes(searchQuery.toLowerCase())
     return matchesCategory && matchesSearch
@@ -205,7 +182,7 @@ export default function Stories({ stories }: StoriesProps) {
                 <div className="relative bg-gradient-to-br from-purple-500/20 to-pink-500/20 aspect-video flex items-center justify-center overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-600/30 to-pink-600/30" />
                   <div className="text-8xl z-10">{currentStory.coverImage}</div>
-                  
+
                   {/* Completion Badge */}
                   {isCompleted && (
                     <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg">
@@ -291,7 +268,7 @@ export default function Stories({ stories }: StoriesProps) {
                       className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all"
                     >
                       <Play className="w-4 h-4 mr-2" />
-                      {isCompleted 
+                      {isCompleted
                         ? getText("Relire", "إعادة القراءة", "Re-read")
                         : getText("Commencer", "ابدأ", "Start")
                       }
@@ -322,7 +299,7 @@ export default function Stories({ stories }: StoriesProps) {
                   {filteredStories.length}
                 </Badge>
               </div>
-              
+
               <div className="space-y-2 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
                 {filteredStories.map((story, idx) => {
                   const completed = hasReadStory(story.id)
@@ -330,11 +307,10 @@ export default function Stories({ stories }: StoriesProps) {
                     <button
                       key={story.id}
                       onClick={() => setCurrentIndex(idx)}
-                      className={`w-full text-left p-4 rounded-lg transition-all group ${
-                        idx === currentIndex
+                      className={`w-full text-left p-4 rounded-lg transition-all group ${idx === currentIndex
                           ? "bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-2 border-purple-500 shadow-md"
                           : "bg-card border-2 border-transparent hover:bg-secondary/20 hover:border-purple-500/30"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="text-2xl mb-2">{story.coverImage}</div>
@@ -382,8 +358,8 @@ export default function Stories({ stories }: StoriesProps) {
                   "Your experiences and perspectives help others. Contact us to contribute to our platform."
                 )}
               </p>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 className="bg-transparent hover:bg-purple-500 hover:text-white border-purple-500/50 hover:border-purple-500 transition-all"
               >

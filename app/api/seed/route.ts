@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
-import { db } from '@/lib/firebase-config'
-import { collection, doc, setDoc } from 'firebase/firestore'
+import { adminDb } from '@/lib/firebase-admin'
 import { seedReels } from '@/lib/seed-data'
 import { seedBadges, seedQuizzes, seedStories, seedHealthCenters } from '@/lib/seed-data'
 
@@ -15,34 +14,34 @@ export async function POST(request: Request) {
 
     // Seed reels
     for (const reel of seedReels) {
-      await setDoc(doc(db, 'reels', reel.id), reel)
+      await adminDb.collection('reels').doc(reel.id).set(reel)
     }
     console.log('✅ Reel seeded')
-    /*
+
     // Seed Badges
     for (const badge of seedBadges) {
-      await setDoc(doc(db, 'badges', badge.id), badge)
+      await adminDb.collection('badges').doc(badge.id).set(badge)
     }
     console.log('✅ Badges seeded')
 
     // Seed Quizzes
     for (const quiz of seedQuizzes) {
-      await setDoc(doc(db, 'quizzes', quiz.id), quiz)
+      await adminDb.collection('quizzes').doc(quiz.id).set(quiz)
     }
     console.log('✅ Quizzes seeded')
 
     // Seed Stories
     for (const story of seedStories) {
-      await setDoc(doc(db, 'stories', story.id), story)
+      await adminDb.collection('stories').doc(story.id).set(story)
     }
     console.log('✅ Stories seeded')
 
     // Seed Health Centers
     for (const center of seedHealthCenters) {
-      await setDoc(doc(db, 'health_centers', center.id), center)
+      await adminDb.collection('healthCenters').doc(center.id).set(center)
     }
     console.log('✅ Health Centers seeded')
-    */
+
     return NextResponse.json({
       success: true,
       message: 'Database seeded successfully!',

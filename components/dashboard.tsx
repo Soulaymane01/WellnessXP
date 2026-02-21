@@ -3,8 +3,8 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { 
-  Trophy, Zap, Flame, Star, Award, Target, TrendingUp, 
+import {
+  Trophy, Zap, Flame, Star, Award, Target, TrendingUp,
   Crown, Sparkles, Medal, Gift, Lock, ChevronRight,
   BookOpen, Film, Brain, Heart, Users, Shield, CheckCircle2
 } from "lucide-react"
@@ -19,10 +19,10 @@ interface DashboardProps {
   activityHistory: any[]
 }
 
-export default function Dashboard({ 
-  onNavigate, 
-  recentQuizzes = [], 
-  recentStories = [], 
+export default function Dashboard({
+  onNavigate,
+  recentQuizzes = [],
+  recentStories = [],
   allBadges = [],
   progress,
   settings,
@@ -39,14 +39,14 @@ export default function Dashboard({
       today.setHours(0, 0, 0, 0)
       let currentStreak = 0
       let checkDate = new Date(today)
-      
+
       for (let i = 0; i < 30; i++) {
         const hasActivity = activityHistory.some(activity => {
           const activityDate = new Date(activity.timestamp)
           activityDate.setHours(0, 0, 0, 0)
           return activityDate.getTime() === checkDate.getTime()
         })
-        
+
         if (hasActivity) {
           currentStreak++
           checkDate.setDate(checkDate.getDate() - 1)
@@ -66,11 +66,11 @@ export default function Dashboard({
     if (activityHistory.length > 0) {
       const oneWeekAgo = new Date()
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
-      
+
       const weeklyPoints = activityHistory
         .filter(activity => new Date(activity.timestamp) >= oneWeekAgo)
         .reduce((sum, activity) => sum + (activity.xpEarned || 0), 0)
-      
+
       setWeeklyXP(weeklyPoints)
 
       const today = new Date()
@@ -82,7 +82,7 @@ export default function Dashboard({
           return activityDate.getTime() === today.getTime()
         })
         .reduce((sum, activity) => sum + (activity.xpEarned || 0), 0)
-      
+
       setDailyGoal({ current: todayXP, target: 100 })
     }
   }, [activityHistory])
@@ -156,7 +156,7 @@ export default function Dashboard({
       gradient: "from-rose-400 to-pink-500",
       iconBg: "bg-rose-500",
       page: "centers"
-    },{
+    }, {
       title: getText("Récompenses", "المكافآت", "rewards"),
       subtitle: getText("Obtiens ta récompense aujourd'hui", "احصل على مكافأتك اليوم", "get your reward today"),
       icon: Trophy,
@@ -254,7 +254,7 @@ export default function Dashboard({
         <div className="lg:col-span-2 space-y-6 min-w-0">
           {/* Daily Goal */}
           <Card className="border-0 shadow-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white overflow-hidden">
-            
+
             <CardHeader className="relative">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -277,7 +277,7 @@ export default function Dashboard({
             </CardHeader>
             <CardContent className="relative">
               <div className="bg-white/20 rounded-full h-4 overflow-hidden backdrop-blur-sm">
-                <div 
+                <div
                   className="h-full bg-gradient-to-r from-white to-white/90 rounded-full transition-all duration-500 shadow-lg"
                   style={{ width: `${Math.min(100, (dailyGoal.current / dailyGoal.target) * 100)}%` }}
                 />
@@ -328,22 +328,20 @@ export default function Dashboard({
                   }
                 }
                 const colors = colorClasses[challenge.color]
-                
+
                 return (
                   <div
                     key={challenge.id}
-                    className={`p-4 rounded-xl border-2 transition-all cursor-pointer hover:shadow-lg ${
-                      challenge.completed
+                    className={`p-4 rounded-xl border-2 transition-all cursor-pointer hover:shadow-lg ${challenge.completed
                         ? `${colors.bg} ${colors.border}`
                         : 'bg-gray-50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                    }`}
+                      }`}
                     onClick={challenge.action}
                   >
                     <div className="flex items-center justify-between mb-3 gap-3">
                       <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                          challenge.completed ? colors.iconBg : 'bg-gray-200 dark:bg-gray-800'
-                        }`}>
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${challenge.completed ? colors.iconBg : 'bg-gray-200 dark:bg-gray-800'
+                          }`}>
                           <Icon className={`w-6 h-6 ${challenge.completed ? colors.icon : 'text-gray-400'}`} />
                         </div>
                         <div className="min-w-0 flex-1">
@@ -359,8 +357,8 @@ export default function Dashboard({
                         <ChevronRight className="w-6 h-6 text-gray-400 flex-shrink-0" />
                       )}
                     </div>
-                    <Progress 
-                      value={challenge.progress} 
+                    <Progress
+                      value={challenge.progress}
                       className={`h-2 ${challenge.completed ? 'bg-gray-200 dark:bg-gray-700' : 'bg-gray-200 dark:bg-gray-800'}`}
                     />
                   </div>
@@ -474,20 +472,18 @@ export default function Dashboard({
                   }
                 }
                 const colors = colorMap[achievement.color]
-                
+
                 return (
                   <div
                     key={idx}
-                    className={`p-3 rounded-xl border-2 transition-all ${
-                      achievement.locked
+                    className={`p-3 rounded-xl border-2 transition-all ${achievement.locked
                         ? 'bg-gray-50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700'
                         : `${colors.bg} ${colors.border}`
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-3 mb-2">
-                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                        achievement.locked ? 'bg-gray-200 dark:bg-gray-800' : colors.iconBg
-                      }`}>
+                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${achievement.locked ? 'bg-gray-200 dark:bg-gray-800' : colors.iconBg
+                        }`}>
                         {achievement.locked ? (
                           <Lock className="w-6 h-6 text-gray-400" />
                         ) : (
@@ -501,8 +497,8 @@ export default function Dashboard({
                         <p className="text-xs text-gray-500 dark:text-gray-500 truncate">{achievement.requirement}</p>
                       </div>
                     </div>
-                    <Progress 
-                      value={achievement.progress} 
+                    <Progress
+                      value={achievement.progress}
                       className={`h-2 ${achievement.locked ? 'bg-gray-200 dark:bg-gray-800' : 'bg-gray-200 dark:bg-gray-700'}`}
                     />
                   </div>
@@ -530,7 +526,7 @@ export default function Dashboard({
                   }
                   const activityStyle = activityIcons[activity.activityType] || { icon: Sparkles, color: 'text-gray-600', bg: 'bg-gray-100' }
                   const Icon = activityStyle.icon
-                  
+
                   return (
                     <div key={idx} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
                       <div className={`w-10 h-10 ${activityStyle.bg} rounded-lg flex items-center justify-center flex-shrink-0`}>
